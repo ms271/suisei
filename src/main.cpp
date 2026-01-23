@@ -1,8 +1,8 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "ogl_utils.h"
-#include "ogl_shader.h"
-#include "ogl_texture.h"
+#include "../include/ogl_utils.h"
+#include "../include/ogl_shader.h"
+#include "../include/ogl_texture.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <glm/glm.hpp>
@@ -66,7 +66,7 @@ int main()
 {
     initWindow ourWindow (MAJOR_VERSION, MINOR_VERSION, SCR_WIDTH, SCR_HEIGHT);
     glfwSetFramebufferSizeCallback(ourWindow.window, framebuffer_size_callback_2);
-    shader ourShader("vertex.vs", "fragment.fs");
+    shader ourShader("shader/vertex.vs", "shader/fragment.fs");
 
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(-0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -95,7 +95,7 @@ int main()
 
     stbi_set_flip_vertically_on_load(true);
 
-    ogl_texture texture1(1, "collage.jpg");
+    ogl_texture texture1(1, "textures/collage.jpg");
 
     ourShader.use(); 
     ourShader.setInt("ourTexture1", 0);

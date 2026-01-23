@@ -1,4 +1,4 @@
-#include "ogl_texture.h"
+#include "../include/ogl_texture.h"
 
 ogl_texture::ogl_texture(int indexx, std::string address)
 

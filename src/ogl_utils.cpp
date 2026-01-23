@@ -1,4 +1,4 @@
-#include"ogl_utils.h"
+#include"../include/ogl_utils.h"
 
 initWindow::initWindow(int MAJOR_VERSION, int MINOR_VERSION, int SCR_WIDTH, int SCR_HEIGHT)
 {

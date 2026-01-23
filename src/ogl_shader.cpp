@@ -1,4 +1,4 @@
-#include "ogl_shader.h"
+#include "../include/ogl_shader.h"
 
 shader::shader(const char* vertexPath, const char* fragmentPath)
 {
