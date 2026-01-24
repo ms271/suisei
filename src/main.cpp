@@ -75,6 +75,19 @@ int main()
     projmat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
+    glm::vec3 cubePositions[] = {
+    glm::vec3(0.0f,  0.0f,  0.0f),
+    glm::vec3(2.0f,  5.0f, -15.0f),
+    glm::vec3(-1.5f, -2.2f, -2.5f),
+    glm::vec3(-3.8f, -2.0f, -12.3f),
+    glm::vec3(2.4f, -0.4f, -3.5f),
+    glm::vec3(-1.7f,  3.0f, -7.5f),
+    glm::vec3(1.3f, -2.0f, -2.5f),
+    glm::vec3(1.5f,  2.0f, -2.5f),
+    glm::vec3(1.5f,  0.2f, -1.5f),
+    glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     unsigned int VBO, VAO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -113,8 +126,8 @@ int main()
     {
         processInput(ourWindow.window);
         makeBlue(ourWindow.window, bgred , bggreen , bgblue);
-        model = glm::rotate(model, (float)(glfwGetTime() / 100000) * glm::radians(15.0f), glm::vec3(0.5f, 1.0f, 0.0f));
-        trans = projmat * view * model;
+        //model = glm::rotate(model, (float)(glfwGetTime() / 100000) * glm::radians(15.0f), glm::vec3(0.5f, 1.0f, 0.0f));
+        //trans = projmat * view * model;
 
         glClearColor(bgred, bggreen, bgblue, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -122,16 +135,19 @@ int main()
         texture1.run();
         
         ourShader.use();
-        glUniformMatrix4fv ( glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+        //glUniformMatrix4fv ( glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
 
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
+        //glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
 
-        modelx = glm::mat4(1.0f);
-        modelx = glm::translate(modelx, glm::vec3(1.0, 1.0, -1.0));
-        trans = projmat * view * modelx;
-        glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
-        glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
+        for(int i = 0; i < 10; i++)
+        {
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, cubePositions[i]);
+            trans = projmat * view * model;
+            glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
+            glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
+        }
 
 
         glfwSwapBuffers(ourWindow.window);
