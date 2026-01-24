@@ -73,6 +73,9 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(-0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 view = glm::mat4(1.0f);
+    glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+    glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     proj = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
@@ -122,11 +125,22 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     glm::mat4 modelx = glm::mat4(1.0f);
-
+    float cam_speed = 1.0f;
+    float base_speed = 2.5f;
+    float delta_time = 0.0f;
+    float last_frame = 0.0f;
+    float current_frame = 0.0f;
+    
     while (!glfwWindowShouldClose(ourWindow.window))
     {
+        current_frame = glfwGetTime();
+        delta_time = current_frame - last_frame;
+        last_frame = current_frame;
+        cam_speed = base_speed * delta_time;
+
         processInput(ourWindow.window);
         makeBlue(ourWindow.window, bgred , bggreen , bgblue);
+        cam_movement(ourWindow.window, cameraPos, cameraFront, cameraUp, cam_speed);
         //model = glm::rotate(model, (float)(glfwGetTime() / 100000) * glm::radians(15.0f), glm::vec3(0.5f, 1.0f, 0.0f));
         //trans = projmat * view * model;
 
@@ -140,11 +154,8 @@ int main()
 
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
-
-        const float radius = 10.0f;
-        float camX = sin(glfwGetTime()) * radius;
-        float camZ = cos(glfwGetTime()) * radius;
-        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+        
+        view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
 
         for(int i = 0; i < cubePositions.size(); i++)
         {

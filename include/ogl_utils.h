@@ -14,6 +14,7 @@ void glfw_init(int MAJOR_VERSION, int MINOR_VERSION);
 void check_error(unsigned int& param, std::string type);
 void processInput(GLFWwindow* window);
 void makeBlue(GLFWwindow* window, float& red, float& green, float& blue);
+void cam_movement(GLFWwindow* window, glm::vec3& cam_Pos, glm::vec3& cam_front, glm::vec3& cam_up, float cam_speed);
 
 class initWindow
 {

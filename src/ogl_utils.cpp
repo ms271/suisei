@@ -84,3 +84,31 @@ void makeBlue(GLFWwindow *window, float &red, float &green, float &blue)
         blue = 1.0f;
     }
 }
+
+void cam_movement(GLFWwindow* window, glm::vec3& cam_Pos, glm::vec3& cam_front, glm::vec3& cam_up, float cam_speed)
+{
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    {
+        cam_Pos += cam_speed * glm::normalize(cam_front);
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    {
+        cam_Pos -= cam_speed * glm::normalize(cam_front);
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    {
+        cam_Pos += cam_speed * glm::normalize(glm::cross(cam_front, cam_up));
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    {
+        cam_Pos -= cam_speed * glm::normalize(glm::cross(cam_front, cam_up));
+    }
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+    {
+        cam_Pos += cam_speed * glm::normalize(cam_up);
+    }
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+    {
+        cam_Pos -= cam_speed * glm::normalize(cam_up);
+    }
+}
