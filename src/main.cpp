@@ -53,6 +53,8 @@ std::vector<float> vertex = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
+const float fov = 30;
+
 glm::mat4 projmat = glm::mat4(1.0f);
 
 void framebuffer_size_callback_2(GLFWwindow* window, int width, int height);
@@ -72,10 +74,10 @@ int main()
     model = glm::rotate(model, glm::radians(-0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 view = glm::mat4(1.0f);
     view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    projmat = glm::perspective(glm::radians(45.0f), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    projmat = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
-    glm::vec3 cubePositions[] = {
+    std::vector<glm::vec3> cubePositions = {
     glm::vec3(0.0f,  0.0f,  0.0f),
     glm::vec3(2.0f,  5.0f, -15.0f),
     glm::vec3(-1.5f, -2.2f, -2.5f),
@@ -140,10 +142,12 @@ int main()
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
 
-        for(int i = 0; i < 10; i++)
+        for(int i = 0; i < cubePositions.size(); i++)
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
+            float angle = 20.0f * i;
+            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
             trans = projmat * view * model;
             glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
             glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
@@ -165,5 +169,5 @@ void framebuffer_size_callback_2(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
     float aspect = (float)width / (float)height;
-    projmat = glm::perspective(glm::radians(45.0f), aspect, 0.1f, 100.0f);
+    projmat = glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
 }
