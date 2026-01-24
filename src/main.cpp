@@ -53,9 +53,9 @@ std::vector<float> vertex = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-const float fov = 30;
+const float fov = 45;
 
-glm::mat4 projmat = glm::mat4(1.0f);
+glm::mat4 proj = glm::mat4(1.0f);
 
 void framebuffer_size_callback_2(GLFWwindow* window, int width, int height);
 
@@ -73,8 +73,7 @@ int main()
     glm::mat4 model = glm::mat4(1.0f);
     model = glm::rotate(model, glm::radians(-0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
     glm::mat4 view = glm::mat4(1.0f);
-    view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-    projmat = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    proj = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
     std::vector<glm::vec3> cubePositions = {
@@ -142,13 +141,18 @@ int main()
         glBindVertexArray(VAO);
         //glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
 
+        const float radius = 10.0f;
+        float camX = sin(glfwGetTime()) * radius;
+        float camZ = cos(glfwGetTime()) * radius;
+        view = glm::lookAt(glm::vec3(camX, 0.0, camZ), glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 1.0, 0.0));
+
         for(int i = 0; i < cubePositions.size(); i++)
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
             float angle = 20.0f * i;
             model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
-            trans = projmat * view * model;
+            trans = proj * view * model;
             glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
             glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
         }
@@ -169,5 +173,5 @@ void framebuffer_size_callback_2(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
     float aspect = (float)width / (float)height;
-    projmat = glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
+    proj = glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
 }
