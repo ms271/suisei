@@ -57,7 +57,9 @@ glm::mat4 proj = glm::mat4(1.0f);
 
 void framebuffer_size_callback_2(GLFWwindow* window, int width, int height);
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_callback(GLFWwindow* window, double xPos, double yPos);
+
+void scroll_callback(GLFWwindow* window, double xOffset, double yOffset);
 
 const unsigned int SCR_WIDTH = 1920;
 const unsigned int SCR_HEIGHT = 1080;
@@ -82,6 +84,7 @@ int main()
     initWindow ourWindow (MAJOR_VERSION, MINOR_VERSION, SCR_WIDTH, SCR_HEIGHT);
     glfwSetFramebufferSizeCallback(ourWindow.window, framebuffer_size_callback_2);
     glfwSetCursorPosCallback(ourWindow.window, mouse_callback);
+    glfwSetScrollCallback(ourWindow.window, scroll_callback);
     shader ourShader("shader/vertex.vs", "shader/fragment.fs");
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -175,6 +178,7 @@ int main()
         //glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
         
         view = glm::lookAt(cameraPos, cameraPos + cameraFront, cameraUp);
+        proj = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 
         for(int i = 0; i < cubePositions.size(); i++)
         {
@@ -212,14 +216,29 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         firstMouse = false;
     }
     
+    float xoffset = xPos - lastX;
+    float yoffset = lastY - yPos;
     lastX = xPos;
     lastY = yPos;
 
-    yaw += (xPos - lastX) * sensitivity;
-    pitch += (yPos - lastY) * (-sensitivity);
+    float sensitivity = 0.1f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+    yaw += xoffset;
+    pitch += yoffset;
 
     if(pitch > 89.0f) pitch = 89.0f;
     if(pitch < -89.0f) pitch = -89.0f;
 
     return;
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    fov -= (float)yoffset;
+    if (fov < 1.0f)
+        fov = 1.0f;
+    if (fov > 45.0f)
+        fov = 45.0f;
 }
