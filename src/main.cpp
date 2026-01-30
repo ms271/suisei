@@ -53,21 +53,35 @@ std::vector<float> vertex = {
     -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
 };
 
-const float fov = 45;
-
 glm::mat4 proj = glm::mat4(1.0f);
 
 void framebuffer_size_callback_2(GLFWwindow* window, int width, int height);
 
-const unsigned int SCR_WIDTH = 1920/2;
-const unsigned int SCR_HEIGHT = 1080/2;
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+
+const unsigned int SCR_WIDTH = 1920;
+const unsigned int SCR_HEIGHT = 1080;
+
 const unsigned int MAJOR_VERSION = 4;
 const unsigned int MINOR_VERSION = 6;
+
+float fov = 45.0f;
+
+float yaw = -90.0f;
+float pitch = 0.0f;
+
+float lastX = SCR_WIDTH / 2;
+float lastY = SCR_HEIGHT / 2;
+const float sensitivity = 0.01f;
+float cam_speed = 2.0f;
+
+bool firstMouse = 1; 
 
 int main()
 {
     initWindow ourWindow (MAJOR_VERSION, MINOR_VERSION, SCR_WIDTH, SCR_HEIGHT);
     glfwSetFramebufferSizeCallback(ourWindow.window, framebuffer_size_callback_2);
+    glfwSetCursorPosCallback(ourWindow.window, mouse_callback);
     shader ourShader("shader/vertex.vs", "shader/fragment.fs");
 
     glm::mat4 model = glm::mat4(1.0f);
@@ -78,6 +92,7 @@ int main()
     glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
     proj = glm::perspective(glm::radians(fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
     glm::mat4 trans = glm::mat4(1.0f);
+    glm::vec3 direction = glm::vec3(1.0f);
 
     std::vector<glm::vec3> cubePositions = {
     glm::vec3(0.0f,  0.0f,  0.0f),
@@ -125,7 +140,6 @@ int main()
     glEnable(GL_DEPTH_TEST);
 
     glm::mat4 modelx = glm::mat4(1.0f);
-    float cam_speed = 1.0f;
     float base_speed = 2.5f;
     float delta_time = 0.0f;
     float last_frame = 0.0f;
@@ -137,6 +151,11 @@ int main()
         delta_time = current_frame - last_frame;
         last_frame = current_frame;
         cam_speed = base_speed * delta_time;
+
+        direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+        direction.y = sin(glm::radians(pitch));
+        direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+        cameraFront = glm::normalize(direction);
 
         processInput(ourWindow.window);
         makeBlue(ourWindow.window, bgred , bggreen , bgblue);
@@ -168,7 +187,6 @@ int main()
             glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
         }
 
-
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
@@ -185,4 +203,29 @@ void framebuffer_size_callback_2(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
     float aspect = (float)width / (float)height;
     proj = glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
+}
+
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+{
+    if (firstMouse)
+    {
+        lastX = xPos;
+        lastY = yPos;
+        firstMouse = false;
+    }
+    float xDelta = xPos - lastX;
+    float yDelta = yPos - lastY;
+    lastX = xPos;
+    lastY = yPos;
+
+    xDelta *= sensitivity;
+    yDelta *= -sensitivity;
+
+    yaw += xDelta;
+    pitch += yDelta;
+
+    if(pitch > 89.0f) pitch = 89.0f;
+    if(pitch < -89.0f) pitch = -89.0f;
+
+    return;
 }

@@ -18,6 +18,10 @@ initWindow::initWindow(int MAJOR_VERSION, int MINOR_VERSION, int SCR_WIDTH, int 
     {
         std::cout << "\nFailed to initialize GLAD\n" << std::endl;
     }
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+
 }
 
 void initWindow::framebufferreset(GLFWwindow* window, int width, int height)
