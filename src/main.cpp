@@ -75,7 +75,7 @@ float lastY = SCR_HEIGHT / 2;
 const float sensitivity = 0.01f;
 float cam_speed = 2.0f;
 
-bool firstMouse = 1; 
+bool firstMouse = 1;
 
 int main()
 {
@@ -180,8 +180,7 @@ int main()
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, cubePositions[i]);
-            float angle = 20.0f * i;
-            model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
             trans = proj * view * model;
             glUniformMatrix4fv(glGetUniformLocation(ourShader.ID, "transform"), 1, GL_FALSE, glm::value_ptr(trans));
             glDrawArrays(GL_TRIANGLES, 0, vertex.size() / 5);
@@ -201,8 +200,7 @@ int main()
 void framebuffer_size_callback_2(GLFWwindow* window, int width, int height)
 {
     glViewport(0, 0, width, height);
-    float aspect = (float)width / (float)height;
-    proj = glm::perspective(glm::radians(fov), aspect, 0.1f, 100.0f);
+    proj = glm::perspective(glm::radians(fov), ((float)width / (float)height), 0.1f, 100.0f);
 }
 
 void mouse_callback(GLFWwindow* window, double xPos, double yPos)
@@ -213,16 +211,12 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
         lastY = yPos;
         firstMouse = false;
     }
-    float xDelta = xPos - lastX;
-    float yDelta = yPos - lastY;
+    
     lastX = xPos;
     lastY = yPos;
 
-    xDelta *= sensitivity;
-    yDelta *= -sensitivity;
-
-    yaw += xDelta;
-    pitch += yDelta;
+    yaw += (xPos - lastX) * sensitivity;
+    pitch += (yPos - lastY) * (-sensitivity);
 
     if(pitch > 89.0f) pitch = 89.0f;
     if(pitch < -89.0f) pitch = -89.0f;
