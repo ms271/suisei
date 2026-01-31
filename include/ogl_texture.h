@@ -1,6 +1,4 @@
-#ifndef OGL_TEXTURE
-#define OGL_TEXTURE
-
+#pragma once
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -17,5 +15,3 @@ public:
     ogl_texture(int index, std::string address);
     void run();
 };
-
-#endif
