@@ -1,8 +1,6 @@
 #pragma once
-#include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
-#include <stb_image.h>
+
+#include "ogl_presets.h"
 #include "ogl_utils.h"
 #include "ogl_shader.h"
 

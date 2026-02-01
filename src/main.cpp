@@ -1,19 +1,11 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#define STB_IMAGE_IMPLEMENTATION
 
+#include "../include/ogl_presets.h"
 #include "../include/ogl_utils.h"
 #include "../include/ogl_shader.h"
 #include "../include/ogl_texture.h"
 #include "../include/ogl_cam.h"
 #include "../include/ogl_object.h"
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "../include/ogl_presets.h"
 
 int main()
 {
@@ -27,7 +19,6 @@ int main()
     glm::mat4 trans = glm::mat4(1.0f);
 
     object cube1;
-    buffer buffer1 (cube1);
 
     stbi_set_flip_vertically_on_load(true);
 
@@ -53,8 +44,7 @@ int main()
         
         ourShader.use();
         cam1.set_view(view);
-        glBindBuffer(GL_ARRAY_BUFFER, buffer1.VBO);
-        glBindVertexArray(buffer1.VAO);
+        cube1.bind();
         
         for(int i = 0; i < cube1.p.size(); i++)
         {
@@ -69,7 +59,7 @@ int main()
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
-    buffer1.del();
+    cube1.del();
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
     return 0;

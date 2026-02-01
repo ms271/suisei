@@ -1,13 +1,24 @@
 #pragma once
-#include <vector>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include"ogl_presets.h"
+
+#include "ogl_presets.h"
+
+class buffer
+{
+public:
+    
+};
 
 class object
 {
 public:
+    unsigned int VBO, VAO;
+
+    void buffer();
+    void del();
+    void bind();
+    
+    object();
+
     //cube verices
     std::vector<float> v = {
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
