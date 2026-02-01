@@ -2,12 +2,6 @@
 
 #include "ogl_presets.h"
 
-class buffer
-{
-public:
-    
-};
-
 class object
 {
 public:

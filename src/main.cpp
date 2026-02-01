@@ -18,11 +18,11 @@ int main()
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
-    object cube1;
+    object cube1;//in object
 
     stbi_set_flip_vertically_on_load(true);
 
-    ogl_texture texture1(1, "textures/collage.jpg");
+    ogl_texture texture1(1, "textures/collage.jpg");//in texture
     ourShader.use(); 
     ourShader.setInt("ourTexture1", 0);
 
