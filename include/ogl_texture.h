@@ -7,7 +7,7 @@
 class texture
 {
 public:
-    unsigned int texture_id;
+    unsigned int id;
     int index;
 
     texture(int index, std::string address);
