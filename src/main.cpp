@@ -22,7 +22,7 @@ int main()
 
     stbi_set_flip_vertically_on_load(true);
 
-    ogl_texture texture1(1, "textures/collage.jpg");//in texture
+    texture texture1(1, "textures/collage.jpg");//in texture
     ourShader.use(); 
     ourShader.setInt("ourTexture1", 0);
 

@@ -4,12 +4,12 @@
 #include "ogl_utils.h"
 #include "ogl_shader.h"
 
-class ogl_texture
+class texture
 {
 public:
-    unsigned int texture;
+    unsigned int texture_id;
     int index;
 
-    ogl_texture(int index, std::string address);
+    texture(int index, std::string address);
     void run();
 };
