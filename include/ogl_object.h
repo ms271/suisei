@@ -7,6 +7,7 @@ class object
 {
 public:
     unsigned int VBO, VAO;
+    glm::vec3 color;
 
     void buffer();
     void del();

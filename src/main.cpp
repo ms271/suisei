@@ -18,18 +18,24 @@ int main()
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
+    glm::vec3 ambient_light = glm::vec3(1.0f, 1.0f, 1.0f);
+    ambient_light *= 0.5;
+
     object cube1;//in object
     cube1.buffer();
+    cube1.color = glm::vec3(1.0f , 0.5f, 0.7f);
 
     object cube2;
     cube2.p.push_back(glm::vec3(4.0f, 2.0f, -5.0f));
     cube2.buffer();
+    cube2.color = glm::vec3(0.0f, 1.0f, 0.7f);
 
     stbi_set_flip_vertically_on_load(true);
 
     texture texture1(1, "textures/collage.jpg");//in texture
     ourShader.use(); 
     ourShader.setInt("ourTexture1", 0);
+    ourShader.setVec3("ambient", ambient_light);
 
     float bgred = 1.0f;
     float bggreen = 0.9f;

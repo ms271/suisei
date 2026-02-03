@@ -43,6 +43,7 @@ void object::unbind()
 void object::draw(glm::mat4& model,  shader& ourShader)
 {
     bind();
+    ourShader.setVec3("object_color", color);
     for (int i = 0; i < p.size(); i++)
     {
         model = glm::mat4(1.0f);
