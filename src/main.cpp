@@ -30,6 +30,7 @@ int main()
     float bggreen = 0.9f;
     float bgblue = 0.9f;
     glEnable(GL_DEPTH_TEST);
+    ourShader.setMat4("projection", PROJ);
     
     while (!glfwWindowShouldClose(ourWindow.window))
     {
@@ -44,6 +45,7 @@ int main()
         
         ourShader.use();
         cam1.set_view(view);
+        ourShader.setMat4("view", view);
         cube1.bind();
         
         for(int i = 0; i < cube1.p.size(); i++)
@@ -51,8 +53,7 @@ int main()
             model = glm::mat4(1.0f);
             model = glm::translate(model, cube1.p[i]);
             model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
-            trans = PROJ * view * model;
-            ourShader.setMat4("transform", trans);
+            ourShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, cube1.v.size() / 5);
         }
 
