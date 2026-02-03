@@ -23,7 +23,6 @@ int main()
 
     object cube1;//in object
     cube1.buffer();
-    cube1.color = glm::vec3(1.0f , 0.5f, 0.7f);
 
     object cube2;
     cube2.p.push_back(glm::vec3(4.0f, 2.0f, -5.0f));
