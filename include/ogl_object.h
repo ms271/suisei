@@ -10,6 +10,7 @@ public:
     void buffer();
     void del();
     void bind();
+    void unbind();
     
     object();
 

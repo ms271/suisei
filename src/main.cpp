@@ -19,7 +19,7 @@ int main()
     glm::mat4 trans = glm::mat4(1.0f);
 
     object cube1;//in object
-
+    cube1.buffer();
     stbi_set_flip_vertically_on_load(true);
 
     texture texture1(1, "textures/collage.jpg");//in texture
@@ -56,6 +56,8 @@ int main()
             ourShader.setMat4("model", model);
             glDrawArrays(GL_TRIANGLES, 0, cube1.v.size() / 5);
         }
+
+        cube1.unbind();
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
