@@ -20,6 +20,11 @@ int main()
 
     object cube1;//in object
     cube1.buffer();
+
+    object cube2;
+    cube2.p.push_back(glm::vec3(4.0f, 2.0f, -5.0f));
+    cube2.buffer();
+
     stbi_set_flip_vertically_on_load(true);
 
     texture texture1(1, "textures/collage.jpg");//in texture
@@ -46,23 +51,15 @@ int main()
         ourShader.use();
         cam1.set_view(view);
         ourShader.setMat4("view", view);
-        cube1.bind();
         
-        for(int i = 0; i < cube1.p.size(); i++)
-        {
-            model = glm::mat4(1.0f);
-            model = glm::translate(model, cube1.p[i]);
-            model = glm::rotate(model, glm::radians(20.0f * i), glm::vec3(1.0f, 0.3f, 0.5f));
-            ourShader.setMat4("model", model);
-            glDrawArrays(GL_TRIANGLES, 0, cube1.v.size() / 5);
-        }
-
-        cube1.unbind();
+        cube1.draw(model, ourShader);
+        cube2.draw(model, ourShader);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
     cube1.del();
+    cube2.del();
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
     return 0;

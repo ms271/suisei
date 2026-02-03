@@ -40,6 +40,19 @@ void object::unbind()
     return;
 }
 
+void object::draw(glm::mat4& model,  shader& ourShader)
+{
+    bind();
+    for (int i = 0; i < p.size(); i++)
+    {
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, p[i]);
+        ourShader.setMat4("model", model);
+        glDrawArrays(GL_TRIANGLES, 0, v.size() / 5);
+    }
+    unbind();
+}
+
 object::object()
 {
 
