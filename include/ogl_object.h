@@ -2,6 +2,7 @@
 
 #include "ogl_presets.h"
 #include "ogl_shader.h"
+#include "ogl_texture.h"
 
 class object
 {
@@ -14,7 +15,7 @@ public:
     void bind();
     void unbind();
     void draw (glm::mat4& model, shader& ourShader);
-    
+
     object();
 
     //cube verices
