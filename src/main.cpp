@@ -21,15 +21,30 @@ int main()
     glm::vec3 ambient_light = glm::vec3(1.0f, 1.0f, 1.0f);
     ambient_light *= 0.1;
 
+    std::vector<glm::vec3> cubePositions = {
+        glm::vec3(0.0f,  0.0f,  0.0f),
+        glm::vec3(2.0f,  5.0f, -15.0f),
+        glm::vec3(-1.5f, -2.2f, -2.5f),
+        glm::vec3(-3.8f, -2.0f, -12.3f),
+        glm::vec3(2.4f, -0.4f, -3.5f),
+        glm::vec3(-1.7f,  3.0f, -7.5f),
+        glm::vec3(1.3f, -2.0f, -2.5f),
+        glm::vec3(1.5f,  2.0f, -2.5f),
+        glm::vec3(1.5f,  0.2f, -1.5f),
+        glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
     object cube1;//in object
+    cube1.p.clear();
+    cube1.p = cubePositions;
+
     cube1.buffer();
     cube1.useTexture = 1;
 
     object cube2;
-    cube2.p.push_back(glm::vec3(4.0f, 2.0f, -5.0f));
+    cube2.p.clear();
+    cube2.p.push_back(glm::vec3(4.0f, 7.0f, 8.0f));
     cube2.buffer();
-    cube2.color = glm::vec3(1.0f, 1.0f, 1.0f);
-    cube2.useTexture = 0;
     cube2.lightObject = 1;
 
     stbi_set_flip_vertically_on_load(true);
@@ -37,6 +52,8 @@ int main()
     texture texture1(1, "textures/collage.jpg");//pointing to texture
     ourShader.use(); 
     ourShader.setVec3("ambient", ambient_light);
+    ourShader.setVec3("lightPos", cube2.p[0]);
+    ourShader.setVec3("lightColor", cube2.color);
 
     float bgred = 0.0f;
     float bggreen = 0.0f;

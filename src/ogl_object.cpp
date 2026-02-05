@@ -54,9 +54,11 @@ void object::draw(glm::mat4& model,  shader& ourShader)
     {
         model = glm::mat4(1.0f);
         model = glm::translate(model, p[i]);
+        float angle = 20.0f * i;
+        model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
         ourShader.setMat4("model", model);
-        normalMatrix = glm::transpose(glm::inverse(glm::mat3(model)));
-        ourShader.setMat3("normalMatrix", normalMatrix);
+        normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
+        ourShader.setMat3("normMatrix", normalMatrix);
         glDrawArrays(GL_TRIANGLES, 0, v.size() / vertexSize);
     }
     unbind();
