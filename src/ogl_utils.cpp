@@ -11,15 +11,6 @@ initWindow::initWindow()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-
-    if (window == NULL)
-    {
-        std::cout << "\nFailed to create GLFW window\n" << std::endl;
-        glfwTerminate();
-    }
-    glfwMakeContextCurrent(window);
-
     GLFWmonitor* primary = glfwGetPrimaryMonitor();
 
     // 2. Get the video mode of that monitor
@@ -28,6 +19,15 @@ initWindow::initWindow()
     // 3. Store the values
     SCR_WIDTH = mode->width;
     SCR_HEIGHT = mode->height;
+
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+
+    if (window == NULL)
+    {
+        std::cout << "\nFailed to create GLFW window\n" << std::endl;
+        glfwTerminate();
+    }
+    glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -51,7 +51,7 @@ void check_error(unsigned int & param, std::string type)
             std::cout << "\nERROR::PROGRAM_LINKING_ERROR of type: " << type << "\n" << infoLog << "\n -- --------------------------------------------------- -- \n";
         }
     }
-    else if(type == "shader") // Otherwise, we are validating a SHADER
+    else
     {
         glGetShaderiv(param, GL_COMPILE_STATUS, &success);
         if (!success)

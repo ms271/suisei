@@ -10,6 +10,8 @@ public:
     unsigned int id;
     int index;
 
+    texture();
+    void set(int index, std::string address);
     texture(int index, std::string address);
-    void run();
+    void run(shader& ourShader);
 };
