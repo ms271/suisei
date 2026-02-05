@@ -35,21 +35,23 @@ int main()
     };
 
     object cube1;//in object
-    cube1.p.clear();
-    cube1.p = cubePositions;
-
     cube1.buffer();
     cube1.useTexture = 1;
 
     object cube2;
-    cube2.p.clear();
-    cube2.p.push_back(glm::vec3(4.0f, 7.0f, 8.0f));
+    cube2.p[0] = glm::vec3(4.0f, 7.0f, 8.0f);
     cube2.buffer();
     cube2.lightObject = 1;
+
+    object cube3;
+    cube3.p[0] = glm::vec3(2.0f, 0.0f, -2.0f);
+    cube3.buffer();
+    cube3.useTexture = 1;
 
     stbi_set_flip_vertically_on_load(true);
 
     texture texture1(1, "textures/collage.jpg");//pointing to texture
+    texture texture2(2, "textures/suisei.jpg");
     ourShader.use(); 
     ourShader.setVec3("ambient", ambient_light);
     ourShader.setVec3("lightPos", cube2.p[0]);
@@ -78,6 +80,10 @@ int main()
 
         cube1.draw(model, ourShader);
         cube2.draw(model, ourShader);
+
+        texture2.run(ourShader);
+
+        cube3.draw(model, ourShader);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
