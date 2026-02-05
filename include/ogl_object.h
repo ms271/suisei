@@ -10,9 +10,10 @@ public:
     unsigned int VBO = 0, VAO = 0;
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     int vertexSize = 8;
-    glm::mat3 normalMatrix;
     bool useTexture = 0;
     bool lightObject = 0;
+    float shinyMulti = 0.1;
+    float shinyExp = 32;
 
     void buffer();
     void del();

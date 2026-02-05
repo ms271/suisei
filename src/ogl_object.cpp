@@ -50,6 +50,9 @@ void object::draw(glm::mat4& model,  shader& ourShader)
     ourShader.setBool("useTexture", useTexture);
     ourShader.setVec3("object_color", color);
     ourShader.setBool("lightObject", lightObject);
+    ourShader.setFloat("specularStrength", shinyMulti);
+    ourShader.setFloat("specularExponent", shinyExp);
+
     for (int i = 0; i < p.size(); i++)
     {
         model = glm::mat4(1.0f);
@@ -57,7 +60,7 @@ void object::draw(glm::mat4& model,  shader& ourShader)
         float angle = 20.0f * i;
         model = glm::rotate(model, glm::radians(angle), glm::vec3(1.0f, 0.3f, 0.5f));
         ourShader.setMat4("model", model);
-        normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
+        glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
         ourShader.setMat3("normMatrix", normalMatrix);
         glDrawArrays(GL_TRIANGLES, 0, v.size() / vertexSize);
     }

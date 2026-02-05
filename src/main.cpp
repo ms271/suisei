@@ -37,9 +37,12 @@ int main()
     object cube1;//in object
     cube1.buffer();
     cube1.useTexture = 1;
+    /*cube1.shinyMulti = 0.8f;
+    cube1.shinyExp = 128;
+    cube1.color = glm::vec3(0.6, 0.4, 0.8);*/
 
     object cube2;
-    cube2.p[0] = glm::vec3(4.0f, 7.0f, 8.0f);
+    cube2.p[0] = glm::vec3(4.0f, 0.0f, -2.0f);
     cube2.buffer();
     cube2.lightObject = 1;
 
@@ -48,10 +51,18 @@ int main()
     cube3.buffer();
     cube3.useTexture = 1;
 
+    object cube4;
+    cube4.p[0] = glm::vec3(-3.0, 1.0, -2.5f);
+    cube4.buffer();
+    cube4.color = glm::vec3(0.8f, 0.5f, 0.3f);
+    cube4.shinyMulti = 0.8f;
+    cube4.shinyExp = 128;
+
     stbi_set_flip_vertically_on_load(true);
 
     texture texture1(1, "textures/collage.jpg");//pointing to texture
     texture texture2(2, "textures/suisei.jpg");
+
     ourShader.use(); 
     ourShader.setVec3("ambient", ambient_light);
     ourShader.setVec3("lightPos", cube2.p[0]);
@@ -74,6 +85,7 @@ int main()
         
         ourShader.use();
         cam1.set_view(view);
+        ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
 
         texture1.run(ourShader);
@@ -84,12 +96,15 @@ int main()
         texture2.run(ourShader);
 
         cube3.draw(model, ourShader);
+        cube4.draw(model, ourShader);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
     cube1.del();
     cube2.del();
+    cube3.del();
+    cube4.del();
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
     return 0;
