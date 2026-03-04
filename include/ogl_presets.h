@@ -18,8 +18,10 @@
 inline unsigned int SCR_WIDTH = 1920;
 inline unsigned int SCR_HEIGHT = 1080;
 
-inline const unsigned int MAJOR_VERSION = 4;
-inline const unsigned int MINOR_VERSION = 6;
+inline const unsigned int MAJOR_VERSION = 3;
+inline const unsigned int MINOR_VERSION = 3;
+
+inline const float window_factor = 0.7;
 
 inline float FOV = 45.0f;
 

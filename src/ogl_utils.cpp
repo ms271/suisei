@@ -17,8 +17,8 @@ initWindow::initWindow()
     const GLFWvidmode* mode = glfwGetVideoMode(primary);
 
     // 3. Store the values
-    SCR_WIDTH = mode->width;
-    SCR_HEIGHT = mode->height;
+    SCR_WIDTH = mode->width * window_factor;
+    SCR_HEIGHT = mode->height * window_factor;
 
     window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
 
@@ -35,6 +35,7 @@ initWindow::initWindow()
     }
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 

@@ -1,4 +1,14 @@
-#version 460 core
+#version 330 core
+
+struct material
+{
+    vec3 ambient;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float shininess;
+}
+
 out vec4 FragColor;
 
 in vec2 TexCoord;
@@ -8,6 +18,8 @@ in vec3 FragPos;
 uniform sampler2D ourTexture1;
 uniform vec3 ambient;
 uniform vec3 object_color;
+
+uniform bool flatShade;
 uniform bool useTexture;
 uniform bool lightObject;
 
@@ -18,9 +30,25 @@ uniform vec3 camPos;
 uniform float specularStrength;
 uniform float specularExponent;
 
+uniform material matrl;
+
 void main()
 {
-    if(!lightObject)
+    if(flatShade && !lightObject)
+    {
+        if(useTexture) 
+        {
+            vec3 texColor = texture(ourTexture1, TexCoord).rgb;
+            vec3 result = texColor;
+            result *= object_color;
+            FragColor = vec4(result, 1.0);
+        }
+        else if(!useTexture)
+        {
+            FragColor = vec4(object_color, 1.0);
+        }
+    }
+    else if(!lightObject)
     {
     // diffuse 
         vec3 norm = normalize(Normal);
@@ -38,15 +66,17 @@ void main()
             vec3 texColor = texture(ourTexture1, TexCoord).rgb;
             vec3 ambientResult = ambient * texColor;
             vec3 diffuseResult = diffuse * texColor;
-            vec3 result = ambientResult + diffuseResult + specular;
+            vec3 result = ambientResult + diffuseResult;
             result *= object_color;
+            result += specular;
             FragColor = vec4(result, 1.0);
         }
-        else
+        else if(!useTexture)
         {
             vec3 result = (ambient + diffuse + specular) * object_color;
             FragColor = vec4(result, 1.0);
         }
+        return;
     }
-    else FragColor = vec4(object_color, 1.0);
+    else if (lightObject) FragColor = vec4(object_color, 1.0);
 }
