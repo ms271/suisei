@@ -50,6 +50,7 @@ void main()
     else if(!lightObject)
     {
     // diffuse 
+        vec3 ambient2 = lightColor * 0.1;
         vec3 norm = normalize(Normal);
         vec3 lightDir = normalize(lightPos - FragPos);
         float diff = max(dot(norm, lightDir), 0.0);
@@ -63,7 +64,7 @@ void main()
         if(useTexture) 
         {
             vec3 texColor = texture(ourTexture1, TexCoord).rgb;
-            vec3 ambientResult = ambient * texColor;
+            vec3 ambientResult = ambient2 * texColor;
             vec3 diffuseResult = diffuse * texColor;
             vec3 result = ambientResult + diffuseResult;
             result *= object_color;
@@ -72,7 +73,8 @@ void main()
         }
         else if(!useTexture)
         {
-            vec3 result = (ambient + diffuse + specular) * object_color;
+            vec3 result = (ambient2 + diffuse) * object_color;
+            result += specular;
             FragColor = vec4(result, 1.0);
         }
         return;

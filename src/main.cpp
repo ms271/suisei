@@ -45,6 +45,7 @@ int main()
 
     object cube2;
     cube2.p[0] = glm::vec3(4.0f, 0.0f, -2.0f);
+    cube2.color = glm::vec3(0.0f, 0.7f, 1.0f);
     cube2.lightObject = 1;
 
     object cube3;
