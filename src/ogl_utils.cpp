@@ -72,13 +72,25 @@ void processInput(GLFWwindow *window)
     return;
 }
 
+bool lastBState;
 void makeBlue(GLFWwindow *window, float &red, float &green, float &blue)
 {
-    if(glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+    bool currentBState = (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS);
+
+    // Only trigger if the key is pressed NOW, but was NOT pressed last frame
+    if (currentBState && !lastBState)
     {
-        red = 0.0f;
-        green = 0.0f;
-        blue = 1.0f;
+        if (!BgColorStatus) {
+            BgColorStatus = 1;
+            red = 1.0f; green = 0.7f; blue = 0.7f;
+        }
+        else {
+            BgColorStatus = 0;
+            red = 0.0f; green = 0.0f; blue = 0.0f;
+        }
     }
+
+    lastBState = currentBState;
+
     return;
 }

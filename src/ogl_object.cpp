@@ -1,53 +1,72 @@
 #include "../include/ogl_object.h"
 
-void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
+void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, mesh* meshUsed)
 {
+    meshUsed->bind();
     ourShader.use();
+
     ourShader.setBool("useTexture", useTexture);
-    ourShader.setVec3("object_color", color);
     ourShader.setBool("lightObject", lightObject);
-    ourShader.setFloat("specularStrength", shinyMulti);
-    ourShader.setFloat("specularExponent", shinyExp);
-    ourShader.setFloat("flatShade", flatShade);
+    ourShader.setBool("flatShade", flatShade);
     
-    if(type == "world")
+    ourShader.setVec3("object_color", color);
+
+    ourShader.setVec3("material.ambient", material.ambient);
+    ourShader.setVec3("material.diffuse", material.diffuse);
+    ourShader.setVec3("material.specular", material.specular);
+    ourShader.setFloat("material.shininess", material.shininess);
+
+    ourShader.setVec3("light.ambient", light->ambient);
+    ourShader.setVec3("light.diffuse", light->diffuse);
+    ourShader.setVec3("light.specular", light->specular);
+    ourShader.setVec3("light.position", light->position);
+
+    if(type == 1)
     {
         for (int i = 0; i < p.size(); i++)
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, p[i]);
-            float angle = 20.0f;
+            float angle = 0;
             float time = glfwGetTime();
             model = glm::rotate(model, glm::radians(angle * time), glm::vec3(1.0f, 0.3f, 0.5f));
             ourShader.setMat4("model", model);
             glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
             ourShader.setMat3("normMatrix", normalMatrix);
-            glDrawArrays(GL_TRIANGLES, 0, v->size() / vertexSize);
+
+            glm::vec3 lightColor;
+            lightColor.x = sin(glfwGetTime() * 2.0f);
+            lightColor.y = sin(glfwGetTime() * 0.7f);
+            lightColor.z = sin(glfwGetTime() * 1.3f);
+
+            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
+            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
+
+            ourShader.setVec3("light.ambient", ambientColor);
+            ourShader.setVec3("light.diffuse", diffuseColor);
+
+            glDrawArrays(GL_TRIANGLES, 0, meshUsed->v->size() / meshUsed->vertexSize);            
         }
     }
 
-    else if (type == "hud")
+    else if (type == 0)
     {
         for (int i = 0; i < p.size(); i++)
         {
             model = glm::mat4(1.0f);
             model = glm::translate(model, cam.cameraPos);
-            float angle = 20.0f;
+            float angle = 0.0f;
             float time = glfwGetTime();
-            //model = glm::rotate(model, glm::radians(angle * time), glm::vec3(1.0f, 0.3f, 0.5f));
+            model = glm::rotate(model, glm::radians(angle * time), glm::vec3(1.0f, 0.3f, 0.5f));
             model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
             ourShader.setMat4("model", model);
             glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
             ourShader.setMat3("normMatrix", normalMatrix);
-            glDrawArrays(GL_TRIANGLES, 0, v->size() / vertexSize);
+
+            glDrawArrays(GL_TRIANGLES, 0, meshUsed->v->size() / meshUsed->vertexSize);
         }
     }
-
-}
-
-object::object(std::string ty)
-{
-    type = ty;
+    meshUsed->unbind();
 }
 
 void mesh::buffer()

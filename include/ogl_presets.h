@@ -30,6 +30,8 @@ inline glm::mat4 PROJ = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (
 inline float YAW = -90.0f;
 inline float PITCH = 0.0f;
 
+inline bool BgColorStatus = 0;
+
 inline float LAST_X = SCR_WIDTH/2;
 inline float LAST_Y = SCR_HEIGHT/2;
 inline const float SENSITIVITY = 0.01f;

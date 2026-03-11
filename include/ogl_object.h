@@ -6,6 +6,7 @@
 #include "ogl_cam.h"
 
 static const inline std::vector<float> cube_model = {
+        //position            //tex coord  //normal
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
          0.5f, -0.5f, -0.5f,  1.0f, 0.0f,  0.0f,  0.0f, -1.0f,
          0.5f,  0.5f, -0.5f,  1.0f, 1.0f,  0.0f,  0.0f, -1.0f,
@@ -62,31 +63,44 @@ public:
     void unbind();
 };
 
+class matrl
+{
+public:
+    glm::vec3 ambient = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 specular = glm::vec3(0.5f, 0.5f, 0.5f);
+    float shininess = 32.0f;
+};
+
+class lgt
+{
+public:
+    glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
+
+    glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+};
+
 class object
 {
 public:
     unsigned int VBO = 0, VAO = 0;
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
-    int vertexSize = 8;
-
+    
     bool useTexture = 0;
     bool lightObject = 0;
     bool flatShade = 0;
 
-    float shinyMulti = 0.1;
-    float shinyExp = 32;
-    std::string type;
-
     mesh* obj_mesh;
-
+    matrl material;
     void setTexture();
-    void draw (glm::mat4& model, shader& ourShader, camera& cam);
+    void draw (glm::mat4& model, shader& ourShader, camera& cam, lgt* light, mesh* meshUsed);
 
-    object(std::string ty = "world");
+    bool type = 1;//1 == world, 0 == hud
 
-    const std::vector<float>* v = &cube_model;
-
-    std::vector<glm::vec3> p = {
+    std::vector<glm::vec3> p = 
+    {
         glm::vec3(0.0f,  0.0f,  0.0f)
     };
 };

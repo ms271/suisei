@@ -18,9 +18,6 @@ int main()
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
-    glm::vec3 ambient_light = glm::vec3(1.0f, 1.0f, 1.0f);
-    ambient_light *= 0.1;
-
     std::vector<glm::vec3> cubePositions = {
         glm::vec3(0.0f,  0.0f,  0.0f),
         glm::vec3(2.0f,  5.0f, -15.0f),
@@ -39,47 +36,27 @@ int main()
 
     object cube1;//in object
     cube1.useTexture = 1;
-    /*cube1.shinyMulti = 0.8f;
-    cube1.shinyExp = 128;
-    cube1.color = glm::vec3(0.6, 0.4, 0.8);*/
 
     object cube2;
-    cube2.p[0] = glm::vec3(4.0f, 0.0f, -2.0f);
-    cube2.color = glm::vec3(0.0f, 0.7f, 1.0f);
+    cube2.p[0] = glm::vec3(12.0f, 15.0f, -6.0f);
     cube2.lightObject = 1;
+    lgt light1;
+    light1.position = cube2.p[0];
 
     object cube3;
-    cube3.p[0] = glm::vec3(2.0f, 0.0f, -2.0f);
-    cube3.useTexture = 1;
-
-    object cube4;
-    cube4.p[0] = glm::vec3(-3.0, 1.0, -2.5f);
-    cube4.color = glm::vec3(0.8f, 0.5f, 0.3f);
-    cube4.shinyMulti = 0.8f;
-    cube4.shinyExp = 128;
-
-    //object cube5 ("hud");
-    //cube5.useTexture = 1;
-    //cube5.flatShade = 1;
+    cube3.p[0] = glm::vec3(4.0f, 0.0f, -4.0f);
+    
+    texture texture1(1, "textures/Collage.jpg");
 
     stbi_set_flip_vertically_on_load(true);
 
-    texture texture1(1, "textures/HnWyn.png");//pointing to texture
-    texture texture2(2, "textures/wall.jpg");
-    //texture texture3(3, "textures/image.jpg");
-
     ourShader.use(); 
-    ourShader.setVec3("ambient", ambient_light);
-    ourShader.setVec3("lightPos", cube2.p[0]);
-    ourShader.setVec3("lightColor", cube2.color);
-
+    
     float bgred = 0.0f;
     float bggreen = 0.0f;
     float bgblue = 0.0f;
     glEnable(GL_DEPTH_TEST);
     ourShader.setMat4("projection", PROJ);
-
-    cubeMesh.bind();
     
     while (!glfwWindowShouldClose(ourWindow.window))
     {
@@ -96,15 +73,9 @@ int main()
         ourShader.setMat4("view", view);
 
         texture1.run(ourShader);
-
-        cube1.draw(model, ourShader, cam1);
-        cube2.draw(model, ourShader, cam1);
-
-        texture2.run(ourShader);
-
-        cube3.draw(model, ourShader, cam1);
-        cube4.draw(model, ourShader, cam1);
-
+        cube1.draw(model, ourShader, cam1, &light1, &cubeMesh);
+        cube2.draw(model, ourShader, cam1, &light1, &cubeMesh);
+        cube3.draw(model, ourShader, cam1, &light1, &cubeMesh);
         //texture3.run(ourShader);
 
         //cube5.draw(model, ourShader, cam1);
@@ -112,7 +83,6 @@ int main()
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
-    cubeMesh.unbind();
     cubeMesh.del();
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
