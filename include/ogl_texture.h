@@ -15,5 +15,5 @@ public:
     texture();
     void set(int index, std::string address);
     texture(int index, std::string address);
-    void run(shader& ourShader);
+    void run(shader& ourShader, std::string texPath);
 };

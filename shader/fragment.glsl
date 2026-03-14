@@ -32,7 +32,6 @@ in vec3 FragPos;
 uniform vec3 object_color;
 
 uniform bool flatShade;
-uniform sampler2D object_texture;
 uniform bool useFlatTex;
 
 uniform bool useDiffTex;
@@ -59,18 +58,18 @@ void main()
     
         float diff = max(dot(norm, lightDir), 0.0);
         
+        //material
         vec3 objCol;
         if(useFlatTex) objCol = texture(material.mainTex, TexCoord).rgb;
         else objCol = material.mainVec;
 
-        //material, TexCoord, useDiffTex
+        //TexCoord, useDiffTex
         if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
             diffuse = diff * light.diffuse * diffTex;
             ambient = light.ambient * diffTex;
         }
-        //object_color
         else
         {
             ambient = light.ambient * objCol * material.ambVec;
@@ -93,7 +92,7 @@ void main()
     else
     {
         //object_texture, useTex
-        if(!useFlatTex) FragColor = vec4(object_color, 1.0);
-        else vec3 FragColor = texture(object_texture, TexCoord).rgb;
+        if(!useFlatTex) FragColor = vec4(material.mainVec, 1.0);
+        else vec3 FragColor = texture(material.mainTex, TexCoord).rgb;
     }
 }

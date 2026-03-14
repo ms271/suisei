@@ -39,18 +39,18 @@ int main()
 
     object cube1;//in object
     cube1.useDiffTex = 1;
-    cube1.objDiffTex = &texture1;
+    cube1.useSpecTex = 1;
+    cube1.material.diffTex = &texture1;
+    cube1.material.specTex = &texture2;
     cube1.objMesh = &cubeMesh;
 
     object cube2;
     cube2.p[0] = glm::vec3(12.0f, 15.0f, -6.0f);
     cube2.objMesh = &cubeMesh;
     cube2.lightObject = 1;
+    cube2.flatShade = 1;
     lgt light1;
     light1.position = cube2.p[0];
-
-    object cube3;
-    cube3.p[0] = glm::vec3(4.0f, 0.0f, -4.0f);
 
     stbi_set_flip_vertically_on_load(true);
 
@@ -76,9 +76,8 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
 
-        cube1.draw(model, ourShader, cam1, &light1, &cubeMesh);
-        cube2.draw(model, ourShader, cam1, &light1, &cubeMesh);
-        cube3.draw(model, ourShader, cam1, &light1, &cubeMesh);
+        cube1.draw(model, ourShader, cam1, &light1);
+        cube2.draw(model, ourShader, cam1, &light1);
         
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();

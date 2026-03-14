@@ -1,29 +1,42 @@
 #include "../include/ogl_object.h"
 
-void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, mesh* meshUsed)
+void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light)
 {
     objMesh->bind();
     ourShader.use();
 
-    ourShader.setBool("useDiffTex", useDiffTex);
     ourShader.setBool("lightObject", lightObject);
+    
     ourShader.setBool("flatShade", flatShade);
-    
-    ourShader.setVec3("object_color", color);
+    if(flatShade)
+    {
+        ourShader.setBool("useFlatTex", useFlatTex);
+        if (useFlatTex) flatTex->run(ourShader, "material.mainTex");
+        else ourShader.setVec3("material.mainVec", color);
+    }
+    else
+    {
+        ourShader.setBool("useSpecTex", useSpecTex);
+        if (useSpecTex) material.specTex->run(ourShader, "material.specTex");
+        else ourShader.setVec3("material.specVec", material.specVec);
 
-    ourShader.setVec3("material.ambient", material.ambient);
-    
-    if(useDiffTex)
-        objDiffTex->run(ourShader);
-    
-    ourShader.setVec3("material.specular", material.specular);
-    ourShader.setFloat("material.shininess", material.shininess);
+        ourShader.setBool("useMainTex", useMainTex);
+        if (useMainTex) material.mainTex->run(ourShader, "material.mainTex");
+        else ourShader.setVec3("material.mainVec", material.mainVec);
 
-    ourShader.setVec3("light.ambient", light->ambient);
-    ourShader.setVec3("light.diffuse", light->diffuse);
-    ourShader.setVec3("light.specular", light->specular);
-    ourShader.setVec3("light.position", light->position);
+        ourShader.setBool("useDiffTex", useDiffTex);
+        if (useDiffTex) material.diffTex->run(ourShader, "material.diffTex");
+        else ourShader.setVec3("material.diffVec", material.diffVec);
 
+        ourShader.setVec3("material.ambVec", material.ambVec);
+        ourShader.setFloat("material.shininess", material.shininess);
+
+        ourShader.setVec3("light.ambient", light->ambient);
+        ourShader.setVec3("light.diffuse", light->diffuse);
+        ourShader.setVec3("light.specular", light->specular);
+        ourShader.setVec3("light.position", light->position);
+    }
+    
     if(type == 1)
     {
         for (int i = 0; i < p.size(); i++)
@@ -36,17 +49,6 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, 
             ourShader.setMat4("model", model);
             glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
             ourShader.setMat3("normMatrix", normalMatrix);
-
-            glm::vec3 lightColor;
-            lightColor.x = sin(glfwGetTime() * 2.0f);
-            lightColor.y = sin(glfwGetTime() * 0.7f);
-            lightColor.z = sin(glfwGetTime() * 1.3f);
-
-            glm::vec3 diffuseColor = lightColor * glm::vec3(0.5f);
-            glm::vec3 ambientColor = diffuseColor * glm::vec3(0.2f);
-
-            ourShader.setVec3("light.ambient", ambientColor);
-            ourShader.setVec3("light.diffuse", diffuseColor);
 
             glDrawArrays(GL_TRIANGLES, 0, objMesh->v->size() / objMesh->vertexSize);            
         }
@@ -90,7 +92,6 @@ void mesh::buffer()
     glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
     glEnableVertexAttribArray(2);//normals
 
-    //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 

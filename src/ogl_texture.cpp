@@ -73,11 +73,11 @@ void texture::set(int indexx, std::string address)
     stbi_image_free(data);
 }
 
-void texture::run(shader& ourShader)
+void texture::run(shader& ourShader, std::string texPath)
 {
     glActiveTexture(GL_TEXTURE0 + (index - 1));
     glBindTexture(GL_TEXTURE_2D, id);
     ourShader.use();
-    ourShader.setInt("material.diffuse", index - 1);
+    ourShader.setInt(texPath, index - 1);
     return;
 }
