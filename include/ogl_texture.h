@@ -4,6 +4,8 @@
 #include "ogl_utils.h"
 #include "ogl_shader.h"
 
+inline int texCount = 0;
+
 class texture
 {
 public:

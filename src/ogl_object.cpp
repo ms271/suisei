@@ -2,17 +2,20 @@
 
 void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, mesh* meshUsed)
 {
-    meshUsed->bind();
+    objMesh->bind();
     ourShader.use();
 
-    ourShader.setBool("useTexture", useTexture);
+    ourShader.setBool("useDiffTex", useDiffTex);
     ourShader.setBool("lightObject", lightObject);
     ourShader.setBool("flatShade", flatShade);
     
     ourShader.setVec3("object_color", color);
 
     ourShader.setVec3("material.ambient", material.ambient);
-    ourShader.setVec3("material.diffuse", material.diffuse);
+    
+    if(useDiffTex)
+        objDiffTex->run(ourShader);
+    
     ourShader.setVec3("material.specular", material.specular);
     ourShader.setFloat("material.shininess", material.shininess);
 
@@ -45,7 +48,7 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, 
             ourShader.setVec3("light.ambient", ambientColor);
             ourShader.setVec3("light.diffuse", diffuseColor);
 
-            glDrawArrays(GL_TRIANGLES, 0, meshUsed->v->size() / meshUsed->vertexSize);            
+            glDrawArrays(GL_TRIANGLES, 0, objMesh->v->size() / objMesh->vertexSize);            
         }
     }
 
@@ -63,10 +66,10 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light, 
             glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
             ourShader.setMat3("normMatrix", normalMatrix);
 
-            glDrawArrays(GL_TRIANGLES, 0, meshUsed->v->size() / meshUsed->vertexSize);
+            glDrawArrays(GL_TRIANGLES, 0, objMesh->v->size() / objMesh->vertexSize);
         }
     }
-    meshUsed->unbind();
+    objMesh->unbind();
 }
 
 void mesh::buffer()

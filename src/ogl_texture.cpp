@@ -78,6 +78,6 @@ void texture::run(shader& ourShader)
     glActiveTexture(GL_TEXTURE0 + (index - 1));
     glBindTexture(GL_TEXTURE_2D, id);
     ourShader.use();
-    ourShader.setInt("ourTexture1", index - 1);
+    ourShader.setInt("material.diffuse", index - 1);
     return;
 }

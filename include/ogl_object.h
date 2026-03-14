@@ -66,8 +66,14 @@ public:
 class matrl
 {
 public:
+    glm::vec3 main = glm::vec3(1.0f, 1.0f, 1.0f);
+    texture* mainTex;
+
     glm::vec3 ambient = glm::vec3(1.0f, 0.5f, 0.31f);
+    texture* diffTex;
     glm::vec3 diffuse = glm::vec3(1.0f, 0.5f, 0.31f);
+    
+    texture* specTex;
     glm::vec3 specular = glm::vec3(0.5f, 0.5f, 0.5f);
     float shininess = 32.0f;
 };
@@ -88,16 +94,22 @@ public:
     unsigned int VBO = 0, VAO = 0;
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     
-    bool useTexture = 0;
+    bool useDiffTex = 0;
+    bool useMainTex = 0;
+    bool useSpecTex = 0;
+    bool useFlattex = 0;
+
     bool lightObject = 0;
     bool flatShade = 0;
 
-    mesh* obj_mesh;
+    mesh* objMesh;
     matrl material;
+    texture* objDiffTex;
+
     void setTexture();
     void draw (glm::mat4& model, shader& ourShader, camera& cam, lgt* light, mesh* meshUsed);
 
-    bool type = 1;//1 == world, 0 == hud
+    int type = 1;//1 == world, 0 == hud
 
     std::vector<glm::vec3> p = 
     {
