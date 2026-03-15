@@ -88,6 +88,10 @@ public:
     glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
 };
 
+void simpleWorldDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p);
+
+void simpleHudDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p, camera& cam);
+
 class object
 {
 public:
@@ -110,6 +114,9 @@ public:
     void setTexture();
     void draw (glm::mat4& model, shader& ourShader, camera& cam, lgt* light);
 
+    void (*drawWorld)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&);
+    void (*drawHUD)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&, camera&);
+    
     int type = 1;//1 == world, 0 == hud
 
     std::vector<glm::vec3> p = 

@@ -6,6 +6,7 @@
 #include "../include/ogl_texture.h"
 #include "../include/ogl_cam.h"
 #include "../include/ogl_object.h"
+#include "../include/ogl_draw.h"
 
 int main()
 {
@@ -36,22 +37,63 @@ int main()
 
     texture texture1(1, "textures/container2.png");
     texture texture2(2, "textures/container2_specular.png");
+    texture texture3(3, "textures/wall.jpg");
 
-    object cube1;//in object
+    object cube1;
+    //set coords
+    cube1.p.clear();
+    for (int i = -5; i <= 5; i++)
+    {
+        for(int j = -5; j <= 5; j++)
+        {
+            cube1.p.push_back(glm::vec3(i, -2, j));
+            cube1.p.push_back(glm::vec3(i, +2, j));
+        }
+    }
+    //set bools
     cube1.useDiffTex = 1;
     cube1.useSpecTex = 1;
+    //set tex
     cube1.material.diffTex = &texture1;
     cube1.material.specTex = &texture2;
+    //set mesh
     cube1.objMesh = &cubeMesh;
+    //set draw type
+    cube1.drawWorld = &simpleWorldDraw;
+    cube1.drawWorld(model, ourShader, &cubeMesh, cube1.p);
 
     object cube2;
-    cube2.p[0] = glm::vec3(12.0f, 15.0f, -6.0f);
+    cube2.p[0] = glm::vec3(0.0f, 1.0f, 0.0f);
     cube2.objMesh = &cubeMesh;
     cube2.lightObject = 1;
     cube2.flatShade = 1;
     lgt light1;
     light1.position = cube2.p[0];
+    cube2.drawWorld = &simpleWorldDraw;
+    cube2.drawWorld(model, ourShader, &cubeMesh, cube2.p);
 
+    object cube3;
+    cube3.p.clear();
+    for (int i = -5; i <= +5; i++)
+    {
+        for(int j = -1; j <= +1; j++)
+        {
+            cube3.p.push_back(glm::vec3(i, j, 5));
+            cube3.p.push_back(glm::vec3(i, j, -5));
+            cube3.p.push_back(glm::vec3(5, j, i));
+            cube3.p.push_back(glm::vec3(-5, j, i));
+        }
+    }
+    cube3.useDiffTex = 1;
+    //set tex
+    cube3.material.diffTex = &texture3;
+    //set mesh
+    cube3.objMesh = &cubeMesh;
+    //set draw type
+    cube3.drawWorld = &simpleWorldDraw;
+    cube3.drawWorld(model, ourShader, &cubeMesh, cube3.p);
+    cube3.material.specVec = glm::vec3(0.2, 0.2, 0.2);
+    
     stbi_set_flip_vertically_on_load(true);
 
     ourShader.use(); 
@@ -78,6 +120,7 @@ int main()
 
         cube1.draw(model, ourShader, cam1, &light1);
         cube2.draw(model, ourShader, cam1, &light1);
+        cube3.draw(model, ourShader, cam1, &light1);
         
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
