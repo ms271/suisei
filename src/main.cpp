@@ -60,14 +60,12 @@ int main()
     cube1.objMesh = &cubeMesh;
     //set draw type
     cube1.drawWorld = &simpleWorldDraw;
-    cube1.drawWorld(model, ourShader, &cubeMesh, cube1.p);
 
     object cube2;
     cube2.p[0] = glm::vec3(1.0f, 1.0f, 2.0f);
     cube2.objMesh = &cubeMesh;
     cube2.flatShade = 1;
     cube2.drawWorld = &simpleWorldDraw;
-    cube2.drawWorld(model, ourShader, &cubeMesh, cube2.p);
 
     object cube3;
     cube3.p.clear();
@@ -88,7 +86,6 @@ int main()
     cube3.objMesh = &cubeMesh;
     //set draw type
     cube3.drawWorld = &simpleWorldDraw;
-    cube3.drawWorld(model, ourShader, &cubeMesh, cube3.p);
     cube3.material.specVec = glm::vec3(0.2, 0.2, 0.2);
 
     //object cube4;
@@ -103,7 +100,6 @@ int main()
     //cube4.objMesh = &cubeMesh;
     ////set draw type
     //cube4.drawWorld = &simpleWorldDraw;
-    //cube4.drawWorld(model, ourShader, &cubeMesh, cube4.p);
 
     posLgt light1;
     light1.position = cube2.p[0];
