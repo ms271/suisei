@@ -20,7 +20,7 @@ initWindow::initWindow()
     SCR_WIDTH = mode->width * window_factor;
     SCR_HEIGHT = mode->height * window_factor;
 
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Project Suisei", NULL, NULL);
 
     if (window == NULL)
     {

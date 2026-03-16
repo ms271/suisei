@@ -14,9 +14,22 @@ struct matrl
     float shininess;
 };
 
-struct lgt 
+struct posLgt 
 {
     vec3 position;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
+struct dirLgt
+{
+    vec3 direction;
   
     vec3 ambient;
     vec3 diffuse;
@@ -36,7 +49,7 @@ uniform bool useFlatTex;
 
 uniform bool useDiffTex;
 uniform bool useSpecTex;
-uniform bool lightObject;
+uniform bool useDirLight;
 
 uniform vec3 camPos;
 
@@ -44,7 +57,8 @@ uniform float specularStrength;
 uniform float specularExponent;
 
 uniform matrl material;
-uniform lgt light;
+uniform posLgt posLight;
+uniform dirLgt dirLight;
 
 void main()
 {
@@ -54,8 +68,34 @@ void main()
 
         //Normal, light, FragPos
         vec3 norm = normalize(Normal);
-        vec3 lightDir = normalize(light.position - FragPos);
-    
+        vec3 lightDir;
+        vec3 lightDiff;
+        vec3 lightSpec;
+        vec3 lightAmb;
+        float lightDist;
+        float lightAttenuation = 1.0f;
+        if(!useDirLight)
+        {
+            lightDist = length(posLight.position - FragPos);
+            lightDir = normalize(posLight.position - FragPos);
+            lightAmb = posLight.ambient;
+            lightDiff = posLight.diffuse;
+            lightSpec = posLight.specular;
+            lightAttenuation = 1.0 / 
+            (
+                posLight.constant + 
+                posLight.linear * lightDist + 
+                posLight.quadratic * lightDist * lightDist
+            );
+        }
+        else 
+        {
+            lightDir = normalize(-dirLight.direction);
+            lightAmb = dirLight.ambient;
+            lightDiff = dirLight.diffuse;
+            lightSpec = dirLight.specular;
+        }
+
         float diff = max(dot(norm, lightDir), 0.0);
         
         //material
@@ -67,13 +107,13 @@ void main()
         if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
-            diffuse = diff * light.diffuse * diffTex;
-            ambient = light.ambient * diffTex;
+            diffuse = diff * lightDiff * diffTex;
+            ambient = lightAmb * diffTex;
         }
         else
         {
-            ambient = light.ambient * objCol * material.ambVec;
-            diffuse = diff * light.diffuse * objCol * material.diffVec;
+            ambient = lightAmb * objCol * material.ambVec;
+            diffuse = diff * lightDiff * objCol * material.diffVec;
         }
         //camPos
         vec3 viewDir = normalize(camPos - FragPos);
@@ -81,11 +121,13 @@ void main()
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
         //useSpecTex
         if(useSpecTex)
-            specular = vec3(texture(material.specTex, TexCoord)) * spec * light.specular;
+            specular = vec3(texture(material.specTex, TexCoord)) * spec * lightSpec;
         else 
-            specular = spec * light.specular * material.specVec;
+            specular = spec * lightSpec * material.specVec;
     
         vec3 result = ambient + diffuse + specular;
+        result *= lightAttenuation;
+        
         //FragColor
         FragColor = vec4(result, 1.0);
     }

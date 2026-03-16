@@ -78,10 +78,24 @@ public:
     float shininess = 32.0f;
 };
 
-class lgt
+class posLgt
 {
 public:
     glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
+
+    glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
+    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    float constant = 1.0f;
+    float linear = 0.09f;
+    float quadratic = 0.032f;
+};
+
+class dirLgt
+{
+public:
+    glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
 
     glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
     glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -104,15 +118,17 @@ public:
 
     bool useFlatTex = 0;
 
-    bool lightObject = 0;
+    bool useDirLight = 0;
     bool flatShade = 0;
 
     mesh* objMesh;
     matrl material;
     texture* flatTex;
+    posLgt* posLight;
+    dirLgt* dirLight;
 
     void setTexture();
-    void draw (glm::mat4& model, shader& ourShader, camera& cam, lgt* light);
+    void draw (glm::mat4& model, shader& ourShader, camera& cam);
 
     void (*drawWorld)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&);
     void (*drawHUD)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&, camera&);

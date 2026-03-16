@@ -1,11 +1,11 @@
 #include "../include/ogl_object.h"
 
-void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light)
+void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
 {
     objMesh->bind();
     ourShader.use();
 
-    ourShader.setBool("lightObject", lightObject);
+    ourShader.setBool("useDirLight", useDirLight);
     
     ourShader.setBool("flatShade", flatShade);
     if(flatShade)
@@ -30,11 +30,26 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam, lgt* light)
 
         ourShader.setVec3("material.ambVec", material.ambVec);
         ourShader.setFloat("material.shininess", material.shininess);
+        
+        if(!useDirLight)
+        {
+            ourShader.setVec3("posLight.ambient", posLight->ambient);
+            ourShader.setVec3("posLight.diffuse", posLight->diffuse);
+            ourShader.setVec3("posLight.specular", posLight->specular);
+            ourShader.setVec3("posLight.position", posLight->position);
 
-        ourShader.setVec3("light.ambient", light->ambient);
-        ourShader.setVec3("light.diffuse", light->diffuse);
-        ourShader.setVec3("light.specular", light->specular);
-        ourShader.setVec3("light.position", light->position);
+            ourShader.setFloat("posLight.constant", posLight->constant);
+            ourShader.setFloat("posLight.linear", posLight->linear);
+            ourShader.setFloat("posLight.quadratic", posLight->quadratic);
+        }
+        else
+        {
+            ourShader.setVec3("dirLight.ambient", dirLight->ambient);
+            ourShader.setVec3("dirLight.diffuse", dirLight->diffuse);
+            ourShader.setVec3("dirLight.specular", dirLight->specular);
+            ourShader.setVec3("dirLight.direction", dirLight->direction);
+        }
+
     }
     
     if(type == 1)

@@ -63,12 +63,9 @@ int main()
     cube1.drawWorld(model, ourShader, &cubeMesh, cube1.p);
 
     object cube2;
-    cube2.p[0] = glm::vec3(0.0f, 1.0f, 0.0f);
+    cube2.p[0] = glm::vec3(1.2f, 1.0f, 2.0f);
     cube2.objMesh = &cubeMesh;
-    cube2.lightObject = 1;
     cube2.flatShade = 1;
-    lgt light1;
-    light1.position = cube2.p[0];
     cube2.drawWorld = &simpleWorldDraw;
     cube2.drawWorld(model, ourShader, &cubeMesh, cube2.p);
 
@@ -93,7 +90,37 @@ int main()
     cube3.drawWorld = &simpleWorldDraw;
     cube3.drawWorld(model, ourShader, &cubeMesh, cube3.p);
     cube3.material.specVec = glm::vec3(0.2, 0.2, 0.2);
-    
+
+    //object cube4;
+    //cube4.p.clear();
+    //cube4.p = cubePositions;
+    //cube4.useDiffTex = 1;
+    //cube4.useSpecTex = 1;
+    ////set tex
+    //cube4.material.diffTex = &texture1;
+    //cube4.material.specTex = &texture2;
+    ////set mesh
+    //cube4.objMesh = &cubeMesh;
+    ////set draw type
+    //cube4.drawWorld = &simpleWorldDraw;
+    //cube4.drawWorld(model, ourShader, &cubeMesh, cube4.p);
+
+    posLgt light1;
+    light1.position = cube2.p[0];
+    cube1.posLight = &light1;
+    cube2.posLight = &light1;
+    cube3.posLight = &light1;
+    //cube4.posLight = &light1;
+
+    //dirLgt light2;
+    //light2.direction = glm::vec3(1.0f, 1.0f, 1.0f);
+    //cube1.dirLight = &light2;
+    //cube1.useDirLight = 1;
+    //cube2.dirLight = &light2;
+    //cube2.useDirLight = 1;
+    //cube3.dirLight = &light2;
+    //cube3.useDirLight = 1;
+
     stbi_set_flip_vertically_on_load(true);
 
     ourShader.use(); 
@@ -118,10 +145,11 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
 
-        cube1.draw(model, ourShader, cam1, &light1);
-        cube2.draw(model, ourShader, cam1, &light1);
-        cube3.draw(model, ourShader, cam1, &light1);
-        
+        cube2.draw(model, ourShader, cam1);
+        //cube4.draw(model, ourShader, cam1);
+        cube3.draw(model, ourShader, cam1);
+        cube1.draw(model, ourShader, cam1);
+
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
