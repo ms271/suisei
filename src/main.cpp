@@ -63,7 +63,7 @@ int main()
     cube1.drawWorld(model, ourShader, &cubeMesh, cube1.p);
 
     object cube2;
-    cube2.p[0] = glm::vec3(1.2f, 1.0f, 2.0f);
+    cube2.p[0] = glm::vec3(1.0f, 1.0f, 2.0f);
     cube2.objMesh = &cubeMesh;
     cube2.flatShade = 1;
     cube2.drawWorld = &simpleWorldDraw;

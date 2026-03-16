@@ -34,8 +34,8 @@ initWindow::initWindow()
         std::cout << "\nFailed to initialize GLAD\n" << std::endl;
     }
 
+    glfwSwapInterval(1);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
 
