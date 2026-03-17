@@ -122,39 +122,20 @@ void main()
             lightDir = normalize(flashLight.position - FragPos);
 
             float theta = dot(lightDir, normalize(-flashLight.direction));//cos theta 
-            if(theta > flashLight.cutOff)
-            {
-                lightDist = length(flashLight.position - FragPos);
-                lightAmb = flashLight.ambient;
-                lightDiff = flashLight.diffuse;
-                lightSpec = flashLight.specular;
-                lightAttenuation = 1.0 / 
-                (
-                    flashLight.constant + 
-                    flashLight.linear * lightDist + 
-                    flashLight.quadratic * lightDist * lightDist
-                );
-            }
-            else if(theta > flashLight.cutOff2)
-            {
-                lightDist = length(flashLight.position - FragPos);
-                lightDir = normalize(flashLight.position - FragPos);
-                lightAmb = flashLight.ambient;
-                lightDiff = flashLight.diffuse*0.5;
-                lightSpec = flashLight.specular*0.5;
-                lightAttenuation = 1.0 / 
-                (
-                    flashLight.constant + 
-                    flashLight.linear * lightDist + 
-                    flashLight.quadratic * lightDist * lightDist
-                );
-            }
-            else
-            {
-                lightAmb = vec3(0);
-                lightDiff = vec3(0);
-                lightSpec = vec3(0);
-            }
+            lightDist = length(flashLight.position - FragPos);
+            lightDir = normalize(flashLight.position - FragPos);
+            float epsilon   = flashLight.cutOff - flashLight.cutOff2;
+            float intensity = clamp((theta - flashLight.cutOff2) / epsilon, 0.0, 1.0);    
+                
+            lightAmb = flashLight.ambient;
+            lightDiff = flashLight.diffuse*intensity;
+            lightSpec = flashLight.specular*intensity;
+            lightAttenuation = 1.0 / 
+            (
+                flashLight.constant + 
+                flashLight.linear * lightDist + 
+                flashLight.quadratic * lightDist * lightDist
+            );
         }
         float diff = max(dot(norm, lightDir), 0.0);
         
