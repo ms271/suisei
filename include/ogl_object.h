@@ -5,6 +5,8 @@
 #include "ogl_texture.h"
 #include "ogl_cam.h"
 
+class camera;
+
 static const inline std::vector<float> cube_model = {
         //position            //tex coord  //normal
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
@@ -92,6 +94,23 @@ public:
     float quadratic = 0.032f;
 };
 
+class flashLgt
+{
+public:
+    glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
+    float cutOff = glm::cos(glm::radians(20.0f));
+    float cutOff2 = glm::cos(glm::radians(22.0f));
+
+    glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
+    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
+
+    float constant = 1.0f;
+    float linear = 0.09f;
+    float quadratic = 0.032f;
+};
+
 class dirLgt
 {
 public:
@@ -118,14 +137,16 @@ public:
 
     bool useFlatTex = 0;
 
-    bool useDirLight = 0;
+    int useLightType = 0;//0 posLight, 1 dirLight, 2 flashLight
     bool flatShade = 0;
 
     mesh* objMesh;
     matrl material;
     texture* flatTex;
+
     posLgt* posLight;
     dirLgt* dirLight;
+    flashLgt* flashLight;
 
     void setTexture();
     void draw (glm::mat4& model, shader& ourShader, camera& cam);

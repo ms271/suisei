@@ -5,7 +5,7 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
     objMesh->bind();
     ourShader.use();
 
-    ourShader.setBool("useDirLight", useDirLight);
+    ourShader.setInt("useLightType", useLightType);
     
     ourShader.setBool("flatShade", flatShade);
     if(flatShade)
@@ -31,7 +31,7 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
         ourShader.setVec3("material.ambVec", material.ambVec);
         ourShader.setFloat("material.shininess", material.shininess);
         
-        if(!useDirLight)
+        if(useLightType == 0)
         {
             ourShader.setVec3("posLight.ambient", posLight->ambient);
             ourShader.setVec3("posLight.diffuse", posLight->diffuse);
@@ -42,14 +42,29 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
             ourShader.setFloat("posLight.linear", posLight->linear);
             ourShader.setFloat("posLight.quadratic", posLight->quadratic);
         }
-        else
+        else if(useLightType == 1)
         {
             ourShader.setVec3("dirLight.ambient", dirLight->ambient);
             ourShader.setVec3("dirLight.diffuse", dirLight->diffuse);
             ourShader.setVec3("dirLight.specular", dirLight->specular);
+
             ourShader.setVec3("dirLight.direction", dirLight->direction);
         }
+        else if (useLightType == 2)
+        {
+            ourShader.setVec3("flashLight.ambient", flashLight->ambient);
+            ourShader.setVec3("flashLight.diffuse", flashLight->diffuse);
+            ourShader.setVec3("flashLight.specular", flashLight->specular);
 
+            ourShader.setVec3("flashLight.position", flashLight->position);
+            ourShader.setVec3("flashLight.direction", flashLight->direction);
+            ourShader.setFloat("flashLight.cutOff", flashLight->cutOff);
+            ourShader.setFloat("flashLight.cutOff2", flashLight->cutOff2);
+
+            ourShader.setFloat("flashLight.constant", flashLight->constant);
+            ourShader.setFloat("flashLight.linear", flashLight->linear);
+            ourShader.setFloat("flashLight.quadratic", flashLight->quadratic);
+        }
     }
     
     if(type == 1)

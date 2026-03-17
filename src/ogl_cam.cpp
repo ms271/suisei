@@ -83,10 +83,13 @@ void camera::run(GLFWwindow* window)
     last_frame = current_frame;
     cam_speed = CAM_BASE_SPEED * delta_time;
 
-    direction.x = cos(glm::radians(YAW)) * cos(glm::radians(PITCH));
-    direction.y = sin(glm::radians(PITCH));
-    direction.z = sin(glm::radians(YAW)) * cos(glm::radians(PITCH));
-    cameraFront = glm::normalize(direction);
+    camDirection.x = cos(glm::radians(YAW)) * cos(glm::radians(PITCH));
+    camDirection.y = sin(glm::radians(PITCH));
+    camDirection.z = sin(glm::radians(YAW)) * cos(glm::radians(PITCH));
+    cameraFront = glm::normalize(camDirection);
+
+    camLight->position = cameraPos;
+    camLight->direction = camDirection;
     
     cam_movement(window);
     return;

@@ -61,11 +61,16 @@ int main()
     //set draw type
     cube1.drawWorld = &simpleWorldDraw;
 
-    object cube2;
-    cube2.p[0] = glm::vec3(1.0f, 1.0f, 2.0f);
-    cube2.objMesh = &cubeMesh;
-    cube2.flatShade = 1;
-    cube2.drawWorld = &simpleWorldDraw;
+    //object cube2;
+    //cube2.p[0] = glm::vec3(0.0f, 0.0f, 0.0f);
+    //cube2.objMesh = &cubeMesh;
+    //cube2.material.mainVec = glm::vec3(1);
+    //cube2.material.ambVec = glm::vec3(1);
+    //cube2.material.diffVec = glm::vec3(1);
+    //cube2.material.specVec = glm::vec3(1);
+
+    //cube2.flatShade = 1;
+    //cube2.drawWorld = &simpleWorldDraw;
 
     object cube3;
     cube3.p.clear();
@@ -90,7 +95,11 @@ int main()
 
     //object cube4;
     //cube4.p.clear();
-    //cube4.p = cubePositions;
+    //for (int i = 0; i < cubePositions.size(); i++)
+    //{
+    //    cube4.p.push_back(cubePositions[i] + glm::vec3(0, 0, 2));
+    //    cube4.p.push_back(-(cubePositions[i] + glm::vec3(0, 0, 2)));
+    //}
     //cube4.useDiffTex = 1;
     //cube4.useSpecTex = 1;
     ////set tex
@@ -101,12 +110,18 @@ int main()
     ////set draw type
     //cube4.drawWorld = &simpleWorldDraw;
 
-    posLgt light1;
-    light1.position = cube2.p[0];
-    cube1.posLight = &light1;
-    cube2.posLight = &light1;
-    cube3.posLight = &light1;
-    //cube4.posLight = &light1;
+    flashLgt light1;
+    cam1.camLight = &light1;
+    //light1.position = cube2.p[0];
+    //light1.direction = glm::vec3(0,0,1);
+    cube1.flashLight = &light1;
+    //cube2.flashLight = &light1;
+    cube3.flashLight = &light1;
+    cube1.useLightType = 2;
+    //cube2.useLightType = 2;
+    cube3.useLightType = 2;
+    //cube4.flashLight = &light1;
+    //cube4.useLightType = 2;
 
     //dirLgt light2;
     //light2.direction = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -141,7 +156,7 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
 
-        cube2.draw(model, ourShader, cam1);
+        //cube2.draw(model, ourShader, cam1);
         //cube4.draw(model, ourShader, cam1);
         cube3.draw(model, ourShader, cam1);
         cube1.draw(model, ourShader, cam1);

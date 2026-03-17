@@ -36,6 +36,22 @@ struct dirLgt
     vec3 specular;
 };
 
+struct flashLgt
+{
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float cutOff2;
+
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
+};
+
 out vec4 FragColor;
 
 in vec2 TexCoord;
@@ -49,7 +65,7 @@ uniform bool useFlatTex;
 
 uniform bool useDiffTex;
 uniform bool useSpecTex;
-uniform bool useDirLight;
+uniform int useLightType;
 
 uniform vec3 camPos;
 
@@ -59,6 +75,7 @@ uniform float specularExponent;
 uniform matrl material;
 uniform posLgt posLight;
 uniform dirLgt dirLight;
+uniform flashLgt flashLight;
 
 void main()
 {
@@ -68,13 +85,17 @@ void main()
 
         //Normal, light, FragPos
         vec3 norm = normalize(Normal);
+        
         vec3 lightDir;
+        float lightDist;
+        float lightAttenuation = 1.0f;
+        float lightCutOff;
+
         vec3 lightDiff;
         vec3 lightSpec;
         vec3 lightAmb;
-        float lightDist;
-        float lightAttenuation = 1.0f;
-        if(!useDirLight)
+        
+        if(useLightType == 0)
         {
             lightDist = length(posLight.position - FragPos);
             lightDir = normalize(posLight.position - FragPos);
@@ -88,14 +109,53 @@ void main()
                 posLight.quadratic * lightDist * lightDist
             );
         }
-        else 
+        else if(useLightType == 1)
         {
             lightDir = normalize(-dirLight.direction);
             lightAmb = dirLight.ambient;
             lightDiff = dirLight.diffuse;
             lightSpec = dirLight.specular;
         }
+        else if(useLightType == 2)
+        {
+            lightCutOff = flashLight.cutOff;
+            lightDir = normalize(flashLight.position - FragPos);
 
+            float theta = dot(lightDir, normalize(-flashLight.direction));//cos theta 
+            if(theta > flashLight.cutOff)
+            {
+                lightDist = length(flashLight.position - FragPos);
+                lightAmb = flashLight.ambient;
+                lightDiff = flashLight.diffuse;
+                lightSpec = flashLight.specular;
+                lightAttenuation = 1.0 / 
+                (
+                    flashLight.constant + 
+                    flashLight.linear * lightDist + 
+                    flashLight.quadratic * lightDist * lightDist
+                );
+            }
+            else if(theta > flashLight.cutOff2)
+            {
+                lightDist = length(flashLight.position - FragPos);
+                lightDir = normalize(flashLight.position - FragPos);
+                lightAmb = flashLight.ambient;
+                lightDiff = flashLight.diffuse*0.5;
+                lightSpec = flashLight.specular*0.5;
+                lightAttenuation = 1.0 / 
+                (
+                    flashLight.constant + 
+                    flashLight.linear * lightDist + 
+                    flashLight.quadratic * lightDist * lightDist
+                );
+            }
+            else
+            {
+                lightAmb = vec3(0);
+                lightDiff = vec3(0);
+                lightSpec = vec3(0);
+            }
+        }
         float diff = max(dot(norm, lightDir), 0.0);
         
         //material
@@ -135,6 +195,6 @@ void main()
     {
         //object_texture, useTex
         if(!useFlatTex) FragColor = vec4(material.mainVec, 1.0);
-        else vec3 FragColor = texture(material.mainTex, TexCoord).rgb;
+        else FragColor = vec4(texture(material.mainTex, TexCoord).rgb, 1.0);
     }
 }
