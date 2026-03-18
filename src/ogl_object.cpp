@@ -103,11 +103,10 @@ void mesh::buffer()
     return;
 }
 
-void mesh::del()
+mesh::~mesh()
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
-    return;
 }
 
 void mesh::bind()

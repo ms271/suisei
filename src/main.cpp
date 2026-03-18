@@ -164,7 +164,6 @@ int main()
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
-    cubeMesh.del();
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
     return 0;

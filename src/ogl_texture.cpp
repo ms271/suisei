@@ -81,3 +81,12 @@ void texture::run(shader& ourShader, std::string texPath)
     ourShader.setInt(texPath, index - 1);
     return;
 }
+
+texture::~texture()
+{
+    if (id != 0)
+    {
+        glDeleteTextures(1, &id);
+        id = 0; // Reset it just to be safe
+    }
+}

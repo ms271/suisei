@@ -38,6 +38,10 @@ initWindow::initWindow()
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 }
+initWindow::~initWindow()
+{
+    if (window != NULL) glfwDestroyWindow(window);
+}
 
 void check_error(unsigned int & param, std::string type)
 {

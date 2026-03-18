@@ -13,6 +13,7 @@ public:
     int index;
 
     texture();
+    ~texture();
     void set(int index, std::string address);
     texture(int index, std::string address);
     void run(shader& ourShader, std::string texPath);

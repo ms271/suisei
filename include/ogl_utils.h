@@ -11,5 +11,6 @@ class initWindow
 public:
     GLFWwindow* window;
     initWindow();
+    ~initWindow();
 };
 

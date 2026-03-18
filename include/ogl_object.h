@@ -60,6 +60,7 @@ public:
     const std::vector<float>* v = &cube_model;
 
     void buffer();
+    ~mesh();
     void del();
     void bind();
     void unbind();
@@ -128,7 +129,6 @@ void simpleHudDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vect
 class object
 {
 public:
-    unsigned int VBO = 0, VAO = 0;
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
     
     bool useDiffTex = 0;
