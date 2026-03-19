@@ -38,6 +38,9 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     FOV -= (float)yoffset;
     if (FOV < 1.0f) FOV = 1.0f;
     if (FOV > 45.0f) FOV = 45.0f;
+
+    PROJ = glm::perspective(glm::radians(FOV), ((float)SCR_WIDTH / (float)SCR_HEIGHT), 0.1f, 100.0f);
+
     return;
 }
 

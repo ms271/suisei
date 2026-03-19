@@ -140,7 +140,7 @@ int main()
     float bggreen = 0.0f;
     float bgblue = 0.0f;
     glEnable(GL_DEPTH_TEST);
-    ourShader.setMat4("projection", PROJ);
+    
     
     while (!glfwWindowShouldClose(ourWindow.window))
     {
@@ -155,6 +155,7 @@ int main()
         cam1.set_view(view);
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
+        ourShader.setMat4("projection", PROJ);
 
         //cube2.draw(model, ourShader, cam1);
         //cube4.draw(model, ourShader, cam1);
