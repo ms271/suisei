@@ -96,7 +96,7 @@ void main()
 
         if(useLightType == 0)
         {
-            result += CalcPointLight(posLight, norm, fragPos, viewDir);
+            result += CalcPointLight(posLight, norm, FragPos, viewDir);
         }
         else if(useLightType == 1)
         {
@@ -104,39 +104,8 @@ void main()
         }
         else if(useLightType == 2)
         {
-            result += CalcFlashLight(flashLight, norm, fragPos, viewDir);
+            result += CalcFlashLight(flashLight, norm, FragPos, viewDir);
         }
-        float diff = max(dot(norm, lightDir), 0.0);
-        
-        //material
-        vec3 objCol;
-        if(useFlatTex) objCol = texture(material.mainTex, TexCoord).rgb;
-        else objCol = material.mainVec;
-
-        //TexCoord, useDiffTex
-        if(useDiffTex)
-        {
-            vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
-            diffuse = diff * lightDiff * diffTex;
-            ambient = lightAmb * diffTex;
-        }
-        else
-        {
-            ambient = lightAmb * objCol * material.ambVec;
-            diffuse = diff * lightDiff * objCol * material.diffVec;
-        }
-        //camPos
-        
-        vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-        //useSpecTex
-        if(useSpecTex)
-            specular = vec3(texture(material.specTex, TexCoord)) * spec * lightSpec;
-        else 
-            specular = spec * lightSpec * material.specVec;
-    
-        vec3 result = ambient + diffuse + specular;
-        result *= lightAttenuation;
         
         //FragColor
         FragColor = vec4(result, 1.0);
@@ -149,7 +118,7 @@ void main()
     }
 }
 
-vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir, bool useDiffTex, bool useSpecTex)
+vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
     // diffuse shading
@@ -163,26 +132,30 @@ vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir, bool useDiffTex, bool
     vec3 diffuse;
     vec3 specular;
 
+    vec3 objCol;
+    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    else objCol = vec3(material.mainVec);
+
     if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
-            diffuse = diff * lightDiff * diffTex;
-            ambient = lightAmb * diffTex;
+            diffuse = diff * light.diffuse * diffTex;
+            ambient = light.ambient * diffTex;
         }
         else
         {
-            ambient = lightAmb * objCol * material.ambVec;
-            diffuse = diff * lightDiff * objCol * material.diffVec;
+            ambient = light.ambient * objCol * material.ambVec;
+            diffuse = diff * light.diffuse * objCol * material.diffVec;
         }
     if(useSpecTex)
-            specular = vec3(texture(material.specTex, TexCoord)) * spec * lightSpec;
+            specular = vec3(texture(material.specTex, TexCoord)) * spec * light.specular;
         else 
-            specular = spec * lightSpec * material.specVec;
+            specular = spec * light.specular * material.specVec;
 
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir, bool useDiffTex, bool useSpecTex)
+vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
     // diffuse shading
@@ -198,21 +171,25 @@ vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir, bool 
     vec3 diffuse;
     vec3 specular;
 
+    vec3 objCol;
+    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    else objCol = vec3(material.mainVec);
+
     if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
-            diffuse = diff * lightDiff * diffTex;
-            ambient = lightAmb * diffTex;
+            diffuse = diff * light.diffuse * diffTex;
+            ambient = light.ambient * diffTex;
         }
         else
         {
-            ambient = lightAmb * objCol * material.ambVec;
-            diffuse = diff * lightDiff * objCol * material.diffVec;
+            ambient = light.ambient * objCol * material.ambVec;
+            diffuse = diff * light.diffuse * objCol * material.diffVec;
         }
     if(useSpecTex)
-            specular = vec3(texture(material.specTex, TexCoord)) * spec * lightSpec;
+            specular = vec3(texture(material.specTex, TexCoord)) * spec * light.specular;
         else 
-            specular = spec * lightSpec * material.specVec;
+            specular = spec * light.specular * material.specVec;
 
     ambient *= attenuation;
     diffuse *= attenuation;
@@ -220,7 +197,7 @@ vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir, bool 
     return (ambient + diffuse + specular);
 }
 
-vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir, bool useDiffTex, bool useSpecTex)
+vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
     // diffuse shading
@@ -233,28 +210,32 @@ vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir, boo
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
     // spotlight intensity
     float theta = dot(lightDir, normalize(-light.direction)); 
-    float epsilon = light.cutOff - light.outerCutOff;
-    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 3.5);
+    float epsilon = light.cutOff - light.cutOff2;
+    float intensity = clamp((theta - light.cutOff2) / epsilon, 0.0, 3.5);
     // combine results
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
 
+    vec3 objCol;
+    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    else objCol = vec3(material.mainVec);
+
     if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
-            diffuse = diff * lightDiff * diffTex;
-            ambient = lightAmb * diffTex;
+            diffuse = diff * light.diffuse * diffTex;
+            ambient = light.ambient * diffTex;
         }
         else
         {
-            ambient = lightAmb * objCol * material.ambVec;
-            diffuse = diff * lightDiff * objCol * material.diffVec;
+            ambient = light.ambient * objCol * material.ambVec;
+            diffuse = diff * light.diffuse * objCol * material.diffVec;
         }
     if(useSpecTex)
-            specular = vec3(texture(material.specTex, TexCoord)) * spec * lightSpec;
+            specular = vec3(texture(material.specTex, TexCoord)) * spec * light.specular;
         else 
-            specular = spec * lightSpec * material.specVec;
+            specular = spec * light.specular * material.specVec;
 
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;

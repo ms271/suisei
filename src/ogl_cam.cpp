@@ -71,11 +71,11 @@ void camera::cam_movement(GLFWwindow* window)
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
     {
-        cameraPos += cam_speed * glm::normalize(cameraUp);
+        cameraPos += cam_speed * glm::normalize(glm::cross(glm::cross(cameraFront, cameraUp), cameraFront));
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
     {
-        cameraPos -= cam_speed * glm::normalize(cameraUp);
+        cameraPos -= cam_speed * glm::normalize(glm::cross(glm::cross(cameraFront, cameraUp), cameraFront));
     }
 }
 
