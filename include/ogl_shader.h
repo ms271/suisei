@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <unordered_map>
 #include "ogl_utils.h"
 
 class shader
@@ -14,6 +15,8 @@ public:
     // the program ID
     unsigned int ID;
 
+    mutable std::unordered_map<std::string,int> address;
+
     // constructor reads and builds the shader
     shader(const char* vertexPath, const char* fragmentPath);
     //destructor
@@ -21,6 +24,9 @@ public:
     // use/activate the shader
     void use();
     // utility uniform functions
+
+    int find(const std::string name) const;
+
     void setBool(const std::string& name, bool value) const;
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;

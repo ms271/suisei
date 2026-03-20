@@ -52,6 +52,8 @@ struct flashLgt
     float quadratic;
 };
 
+#define NR_POS_LIGHTS 4
+
 out vec4 FragColor;
 
 in vec2 TexCoord;
@@ -63,9 +65,9 @@ uniform vec3 object_color;
 uniform bool flatShade;
 uniform bool useFlatTex;
 
+uniform bool useMainTex;
 uniform bool useDiffTex;
 uniform bool useSpecTex;
-uniform int useLightType;
 
 uniform vec3 camPos;
 
@@ -73,7 +75,7 @@ uniform float specularStrength;
 uniform float specularExponent;
 
 uniform matrl material;
-uniform posLgt posLight;
+uniform posLgt[NR_POS_LIGHTS] posLight;
 uniform dirLgt dirLight;
 uniform flashLgt flashLight;
 
@@ -94,18 +96,18 @@ void main()
         
         vec3 result = vec3(0);
 
-        if(useLightType == 0)
+        for(int i = 0; i < NR_POS_LIGHTS; i++)
         {
-            result += CalcPointLight(posLight, norm, FragPos, viewDir);
+            if(posLight[i].constant == 0) continue;
+
+            result += CalcPointLight(posLight[i], norm, FragPos, viewDir);
         }
-        else if(useLightType == 1)
-        {
-            result += CalcDirLight(dirLight, norm, viewDir);
-        }
-        else if(useLightType == 2)
-        {
-            result += CalcFlashLight(flashLight, norm, FragPos, viewDir);
-        }
+
+        
+        result += CalcDirLight(dirLight, norm, viewDir);
+        
+        if(flashLight.constant != 0)
+        result += CalcFlashLight(flashLight, norm, FragPos, viewDir);
         
         //FragColor
         FragColor = vec4(result, 1.0);
@@ -133,7 +135,7 @@ vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir)
     vec3 specular;
 
     vec3 objCol;
-    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    if(useMainTex) objCol = objCol = vec3(material.mainVec);
     else objCol = vec3(material.mainVec);
 
     if(useDiffTex)
@@ -172,7 +174,7 @@ vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 specular;
 
     vec3 objCol;
-    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    if(useMainTex) objCol = objCol = vec3(material.mainVec);
     else objCol = vec3(material.mainVec);
 
     if(useDiffTex)
@@ -218,7 +220,7 @@ vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 specular;
 
     vec3 objCol;
-    if(useFlatTex) objCol = objCol = vec3(material.mainVec);
+    if(useMainTex) objCol = objCol = vec3(material.mainVec);
     else objCol = vec3(material.mainVec);
 
     if(useDiffTex)

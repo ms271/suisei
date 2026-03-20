@@ -11,9 +11,9 @@
 int main()
 {
     initWindow ourWindow;//in util
-    set_callback(ourWindow.window);//in cam
     shader ourShader("shader/vertex.glsl", "shader/fragment.glsl");//in shader
     camera cam1;//in cam
+    set_callback(ourWindow.window, cam1);//in cam
 
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
@@ -61,16 +61,24 @@ int main()
     //set draw type
     cube1.drawWorld = &simpleWorldDraw;
 
-    //object cube2;
-    //cube2.p[0] = glm::vec3(0.0f, 0.0f, 0.0f);
-    //cube2.objMesh = &cubeMesh;
-    //cube2.material.mainVec = glm::vec3(1);
-    //cube2.material.ambVec = glm::vec3(1);
-    //cube2.material.diffVec = glm::vec3(1);
-    //cube2.material.specVec = glm::vec3(1);
+    object cube2;
+    cube2.p[0] = glm::vec3(10.0f, 0.0f, 0.0f);
+    cube2.objMesh = &cubeMesh;
+    cube2.material.mainVec = glm::vec3(1);
+    cube2.material.ambVec = glm::vec3(1);
+    cube2.material.diffVec = glm::vec3(1);
+    cube2.material.specVec = glm::vec3(1);
 
-    //cube2.flatShade = 1;
-    //cube2.drawWorld = &simpleWorldDraw;
+    cube2.flatShade = 1;
+    cube2.drawWorld = &simpleWorldDraw;
+
+    object cube4;
+    cube4.p[0] = glm::vec3(0.0f, 10.0f, 0.0f);
+    cube4.objMesh = &cubeMesh;
+    cube4.material.mainVec = glm::vec3(1);
+    
+    cube4.flatShade = 1;
+    cube4.drawWorld = &simpleWorldDraw;
 
     object cube3;
     cube3.p.clear();
@@ -110,27 +118,24 @@ int main()
     ////set draw type
     //cube4.drawWorld = &simpleWorldDraw;
 
-    flashLgt light1;
-    cam1.camLight = &light1;
-    //light1.position = cube2.p[0];
-    //light1.direction = glm::vec3(0,0,1);
-    cube1.flashLight = &light1;
-    //cube2.flashLight = &light1;
-    cube3.flashLight = &light1;
-    cube1.useLightType = 2;
-    //cube2.useLightType = 2;
-    cube3.useLightType = 2;
-    //cube4.flashLight = &light1;
-    //cube4.useLightType = 2;
+    flashLgt flashLight;
+    posLgt posLight1;
+    posLgt posLight2;
 
-    //dirLgt light2;
-    //light2.direction = glm::vec3(1.0f, 1.0f, 1.0f);
-    //cube1.dirLight = &light2;
-    //cube1.useDirLight = 1;
-    //cube2.dirLight = &light2;
-    //cube2.useDirLight = 1;
-    //cube3.dirLight = &light2;
-    //cube3.useDirLight = 1;
+    //light light1;
+    //light1.flashLight = &flashLight;
+    //light1.lightType = 2;
+    //cam1.camLight = light1.flashLight;
+    //
+    light light2;
+    light2.posLight = &posLight1;
+    light2.index = 0;
+    light2.posLight->position = cube2.p[0];
+
+    light light3;
+    light3.posLight = &posLight2;
+    light3.index = 1;
+    light3.posLight->position = cube4.p[0];
 
     stbi_set_flip_vertically_on_load(true);
 
@@ -155,10 +160,14 @@ int main()
         cam1.set_view(view);
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
-        ourShader.setMat4("projection", PROJ);
+        ourShader.setMat4("projection", cam1.PROJ);
 
-        //cube2.draw(model, ourShader, cam1);
-        //cube4.draw(model, ourShader, cam1);
+        //light1.run(ourShader);
+        light2.run(ourShader);
+        light3.run(ourShader);
+
+        cube2.draw(model, ourShader, cam1);
+        cube4.draw(model, ourShader, cam1);
         cube3.draw(model, ourShader, cam1);
         cube1.draw(model, ourShader, cam1);
 

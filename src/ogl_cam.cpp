@@ -2,50 +2,57 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    camera* cam = static_cast<camera*>(glfwGetWindowUserPointer(window));
+
     glViewport(0, 0, width, height);
-    PROJ = glm::perspective(glm::radians(FOV), ((float)width / (float)height), 0.1f, 100.0f);
+    cam->PROJ = glm::perspective(glm::radians(cam->FOV), ((float)width / (float)height), 0.1f, 100.0f);
 }
 
 void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
-    if (FIRST_MOUSE)
+    camera* cam = static_cast<camera*>(glfwGetWindowUserPointer(window));
+    
+    if (cam->FIRST_MOUSE)
     {
-        LAST_X = xPos;
-        LAST_Y = yPos;
-        FIRST_MOUSE = false;
+        cam->LAST_X = xPos;
+        cam->LAST_Y = yPos;
+        cam->FIRST_MOUSE = false;
     }
 
-    float xoffset = xPos - LAST_X;
-    float yoffset = LAST_Y - yPos;
-    LAST_X = xPos;
-    LAST_Y = yPos;
+    float xoffset = xPos - cam->LAST_X;
+    float yoffset = cam->LAST_Y - yPos;
+    cam->LAST_X = xPos;
+    cam->LAST_Y = yPos;
 
     float SENSITIVITY = 0.1f;
     xoffset *= SENSITIVITY;
     yoffset *= SENSITIVITY;
 
-    YAW += xoffset;
-    PITCH += yoffset;
+    cam->YAW += xoffset;
+    cam->PITCH += yoffset;
 
-    if (PITCH > 89.0f) PITCH = 89.0f;
-    if (PITCH < -89.0f) PITCH = -89.0f;
+    if (cam->PITCH > 89.0f) cam->PITCH = 89.0f;
+    if (cam->PITCH < -89.0f) cam->PITCH = -89.0f;
 
     return;
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    FOV -= (float)yoffset;
-    if (FOV < 1.0f) FOV = 1.0f;
-    if (FOV > 45.0f) FOV = 45.0f;
+    camera* cam = static_cast<camera*>(glfwGetWindowUserPointer(window));
 
-    PROJ = glm::perspective(glm::radians(FOV), ((float)SCR_WIDTH / (float)SCR_HEIGHT), 0.1f, 100.0f);
+    cam->FOV -= (float)yoffset;
+    if (cam->FOV < 1.0f) cam->FOV = 1.0f;
+    if (cam->FOV > 45.0f) cam->FOV = 45.0f;
+
+    cam->PROJ = glm::perspective(glm::radians(cam->FOV), ((float)SCR_WIDTH / (float)SCR_HEIGHT), 0.1f, 100.0f);
 
     return;
 }
 
-void set_callback(GLFWwindow* window)
+void set_callback(GLFWwindow* window, camera& cam)
 {
+    glfwSetWindowUserPointer(window, &cam);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
@@ -91,8 +98,11 @@ void camera::run(GLFWwindow* window)
     camDirection.z = sin(glm::radians(YAW)) * cos(glm::radians(PITCH));
     cameraFront = glm::normalize(camDirection);
 
-    camLight->position = cameraPos;
-    camLight->direction = camDirection;
+    if(camLight != nullptr)
+    {
+        camLight->position = cameraPos;
+        camLight->direction = camDirection;
+    }
     
     cam_movement(window);
     return;

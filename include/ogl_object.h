@@ -4,6 +4,7 @@
 #include "ogl_shader.h"
 #include "ogl_texture.h"
 #include "ogl_cam.h"
+#include "ogl_lighting.h"
 
 class camera;
 
@@ -81,47 +82,6 @@ public:
     float shininess = 32.0f;
 };
 
-class posLgt
-{
-public:
-    glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
-
-    glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
-    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    float constant = 1.0f;
-    float linear = 0.09f;
-    float quadratic = 0.032f;
-};
-
-class flashLgt
-{
-public:
-    glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
-    glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
-    float cutOff = glm::cos(glm::radians(20.0f));
-    float cutOff2 = glm::cos(glm::radians(22.0f));
-
-    glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
-    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
-
-    float constant = 1.0f;
-    float linear = 0.09f;
-    float quadratic = 0.032f;
-};
-
-class dirLgt
-{
-public:
-    glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
-
-    glm::vec3 ambient = glm::vec3(0.2f, 0.2f, 0.2f);
-    glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
-    glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
-};
-
 void simpleWorldDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p);
 
 void simpleHudDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p, camera& cam);
@@ -143,10 +103,6 @@ public:
     mesh* objMesh;
     matrl material;
     texture* flatTex;
-
-    posLgt* posLight;
-    dirLgt* dirLight;
-    flashLgt* flashLight;
 
     void setTexture();
     void draw (glm::mat4& model, shader& ourShader, camera& cam);
