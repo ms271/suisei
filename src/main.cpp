@@ -122,11 +122,11 @@ int main()
     posLgt posLight1;
     posLgt posLight2;
 
-    //light light1;
-    //light1.flashLight = &flashLight;
-    //light1.lightType = 2;
-    //cam1.camLight = light1.flashLight;
-    //
+    light light1;
+    light1.flashLight = &flashLight;
+    light1.lightType = 2;
+    cam1.camLight = light1.flashLight;
+    
     light light2;
     light2.posLight = &posLight1;
     light2.index = 0;
@@ -162,7 +162,7 @@ int main()
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
 
-        //light1.run(ourShader);
+        light1.run(ourShader);
         light2.run(ourShader);
         light3.run(ourShader);
 
