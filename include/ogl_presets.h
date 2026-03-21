@@ -15,6 +15,10 @@
 
 #include <stb_image.h>
 
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
+
 inline unsigned int SCR_WIDTH = 1920;
 inline unsigned int SCR_HEIGHT = 1080;
 
