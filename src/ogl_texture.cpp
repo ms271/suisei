@@ -73,7 +73,7 @@ void texture::set(int indexx, std::string address)
     stbi_image_free(data);
 }
 
-void texture::run(shader& ourShader, std::string texPath)
+void texture::run(shader& ourShader, std::string texPath) const
 {
     glActiveTexture(GL_TEXTURE0 + (index - 1));
     glBindTexture(GL_TEXTURE_2D, id);

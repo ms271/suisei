@@ -3,7 +3,7 @@
 #include "../include/ogl_shader.h"
 #include "../include/ogl_object.h"
 
-void simpleWorldDraw(glm::mat4 & model, shader & ourShader, mesh* objMesh, std::vector<glm::vec3>&p)
+void simpleWorldDraw(glm::mat4& model, shader & ourShader, mesh* objMesh, std::vector<glm::vec3>&p)
 {
     for (int i = 0; i < p.size(); i++)
     {
