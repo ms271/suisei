@@ -53,12 +53,23 @@ static const inline std::vector<float> cube_model = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
 };
 
+struct vertex
+{
+    glm::vec3 Position;
+    glm::vec3 Normal;
+    glm::vec2 TexCoords;
+};
+
 class mesh
 {
 public:
     unsigned int VBO = 0, VAO = 0;
     int vertexSize = 8;
     const std::vector<float>* v = &cube_model;
+
+    std::vector<vertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<texture> textures;
 
     void buffer();
     ~mesh();

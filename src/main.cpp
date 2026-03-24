@@ -36,7 +36,7 @@ int main()
     mesh cubeMesh;
     cubeMesh.buffer();
 
-    ass_model mesh1("models/honda_nsx_1990/scene.gltf");
+    ass_model mesh1("models/backpack/backpack.obj");
 
     //texture texture1(1, "textures/container2.png");
     //texture texture2(2, "textures/container2_specular.png");
@@ -144,7 +144,8 @@ int main()
     stbi_set_flip_vertically_on_load(true);
 
     ourShader.use(); 
-    
+    ourShader.setBool("alp", true);
+
     float bgred = 0.0f;
     float bggreen = 0.0f;
     float bgblue = 0.0f;

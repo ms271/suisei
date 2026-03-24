@@ -11,10 +11,13 @@ class texture
 public:
     unsigned int id;
     int index;
+    std::string path;
+    std::string type;
 
     texture();
     ~texture();
-    void set(int index, std::string address);
     texture(int index, std::string address);
+
+    void set(int index, std::string address);
     void run(shader& ourShader, std::string texPath) const;
 };

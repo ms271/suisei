@@ -72,6 +72,7 @@ in vec3 FragPos;
 uniform vec3 object_color;
 
 uniform bool assimp;
+uniform bool alp;
 
 uniform bool flatShade;
 uniform bool useFlatTex;
@@ -300,7 +301,6 @@ vec3 CalcDirLightAss(dirLgt light, vec3 normal, vec3 viewDir)
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
 
-    bool alp = false;
 
     if(alp)
         {
@@ -346,7 +346,7 @@ vec3 CalcPointLightAss(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 objCol = vec3(1);
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
-    bool alp = false;
+    
     if(alp)
         {
             vec3 diffTex = vec3(texture(aspMaterial.texture_diffuse1, TexCoord));
@@ -399,9 +399,8 @@ vec3 CalcFlashLightAss(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
 
-    bool asp = false;
 
-    if(asp)
+    if(alp)
         {
             vec3 diffTex = vec3(texture(aspMaterial.texture_diffuse1, TexCoord));
             //diffTex += vec3(texture(aspMaterial.texture_diffuse2, TexCoord));
@@ -415,7 +414,7 @@ vec3 CalcFlashLightAss(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
             ambient = light.ambient * objCol * material.ambVec;
             diffuse = diff * light.diffuse * objCol * material.diffVec;
         }
-    if(asp)
+    if(alp)
         {
                 specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
         //specular += vec3(texture(aspMaterial.texture_specular2, TexCoord)) * spec * light.specular;
