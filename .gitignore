@@ -4,7 +4,5 @@ x64/
 *.vcxproj*
 *.sln
 
-*.jpg
-*.png
-*webp
-*.jpeg
+models/
+textures/
