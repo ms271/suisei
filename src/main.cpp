@@ -20,23 +20,15 @@ int main()
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 trans = glm::mat4(1.0f);
 
-    std::vector<glm::vec3> cubePositions = {
-        glm::vec3(0.0f,  0.0f,  0.0f),
-        glm::vec3(2.0f,  5.0f, -15.0f),
-        glm::vec3(-1.5f, -2.2f, -2.5f),
-        glm::vec3(-3.8f, -2.0f, -12.3f),
-        glm::vec3(2.4f, -0.4f, -3.5f),
-        glm::vec3(-1.7f,  3.0f, -7.5f),
-        glm::vec3(1.3f, -2.0f, -2.5f),
-        glm::vec3(1.5f,  2.0f, -2.5f),
-        glm::vec3(1.5f,  0.2f, -1.5f),
-        glm::vec3(-1.3f,  1.0f, -1.5f)
-    };
-
     mesh cubeMesh;
     cubeMesh.buffer();
 
-    ass_model mesh1("models/backpack/backpack.obj");
+    ass_model mesh1("models/yae_miko.glb");
+    
+    glm::mat4 transform1 = glm::mat4 (1);
+    //transform1 = glm::rotate(transform1, glm::radians(90.0f), glm::vec3(1, 0, 0));
+    transform1 = glm::scale(transform1, glm::vec3(2));
+    mesh1.modelTransform = transform1;
 
     //texture texture1(1, "textures/container2.png");
     //texture texture2(2, "textures/container2_specular.png");
@@ -72,17 +64,6 @@ int main()
     cube2.material.diffVec = glm::vec3(1);
     cube2.material.specVec = glm::vec3(1);
     cube2.drawWorld = &simpleWorldDraw;
-
-    //cube2.flatShade = 1;
-    //cube2.drawWorld = &simpleWorldDraw;
-
-    //object cube4;
-    //cube4.p[0] = glm::vec3(0.0f, 10.0f, 0.0f);
-    //cube4.objMesh = &cubeMesh;
-    //cube4.material.mainVec = glm::vec3(1);
-    //
-    //cube4.flatShade = 1;
-    //cube4.drawWorld = &simpleWorldDraw;
 
     //object cube3;
     //cube3.p.clear();
@@ -125,32 +106,29 @@ int main()
     flashLgt flashLight;
     posLgt posLight1;
     posLgt posLight2;
+    dirLgt dirLight;
 
     light light1;
     light1.flashLight = &flashLight;
     light1.lightType = 2;
     cam1.camLight = light1.flashLight;
+
+    light light2;
+    light2.dirLight = &dirLight;
+    light2.lightType = 1;
     
-    //light light2;
-    //light2.posLight = &posLight1;
-    //light2.index = 0;
-    //light2.posLight->position = cube2.p[0];
-
-    //light light3;
-    //light3.posLight = &posLight2;
-    //light3.index = 1;
-    //light3.posLight->position = cube4.p[0];
-
     stbi_set_flip_vertically_on_load(true);
 
-    ourShader.use(); 
-    ourShader.setBool("alp", true);
+    ourShader.use();
 
     float bgred = 0.0f;
     float bggreen = 0.0f;
     float bgblue = 0.0f;
+
     glEnable(GL_DEPTH_TEST);
-    
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDisable(GL_CULL_FACE);
     
     while (!glfwWindowShouldClose(ourWindow.window))
     {
@@ -167,10 +145,11 @@ int main()
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
 
-        light1.run(ourShader);
+        //light1.run(ourShader);
+        light2.run(ourShader);
 
-        glm::mat4 assimpModel = glm::mat4(1.0f);
-        ourShader.setMat4("model", assimpModel);
+        //glm::mat4 assimpModel = glm::mat4(1.0f);
+        //ourShader.setMat4("model", assimpModel);
         mesh1.draw(ourShader);
         //light2.run(ourShader);
         //light3.run(ourShader);

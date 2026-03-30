@@ -14,7 +14,7 @@ struct matrl
     float shininess;
 };
 
-struct aiMatrl
+struct aspMatrl
 {
     sampler2D texture_diffuse1;
     sampler2D texture_diffuse2;
@@ -68,11 +68,13 @@ out vec4 FragColor;
 in vec2 TexCoord;
 in vec3 Normal;
 in vec3 FragPos;
+in vec4 Color;
 
 uniform vec3 object_color;
 
 uniform bool assimp;
 uniform bool alp;
+uniform bool alpSpec;
 
 uniform bool flatShade;
 uniform bool useFlatTex;
@@ -87,7 +89,7 @@ uniform float specularStrength;
 uniform float specularExponent;
 
 uniform matrl material;
-uniform aiMatrl aspMaterial;
+uniform aspMatrl aspMaterial;
 uniform posLgt[NR_POS_LIGHTS] posLight;
 uniform dirLgt dirLight;
 uniform flashLgt flashLight;
@@ -106,10 +108,19 @@ void main()
     {
         //Normal, light, FragPos
         vec3 norm = normalize(Normal);
+        if(!gl_FrontFacing) norm *= -1;
 
         vec3 viewDir = normalize(camPos - FragPos);
         
         vec3 result = vec3(0);
+
+        vec4 texColor = vec4(1);
+
+        if(alp) 
+        {
+            texColor = texture(aspMaterial.texture_diffuse1, TexCoord);
+            if(texColor.a < 0.1) discard; // The "Early Exit"
+        }
 
         for(int i = 0; i < NR_POS_LIGHTS; i++)
         {
@@ -124,7 +135,8 @@ void main()
         result += CalcFlashLightAss(flashLight, norm, FragPos, viewDir);
         
         //FragColor
-        FragColor = vec4(result, 1.0);
+FragColor = vec4(result, 1.0); 
+return;
     }
     else if(!flatShade)
     {
@@ -176,9 +188,12 @@ vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir)
     if(useMainTex) objCol = objCol = vec3(material.mainVec);
     else objCol = vec3(material.mainVec);
 
+
+
     if(useDiffTex)
         {
             vec3 diffTex = vec3(texture(material.diffTex, TexCoord));
+
             diffuse = diff * light.diffuse * diffTex;
             ambient = light.ambient * diffTex;
         }
@@ -290,39 +305,39 @@ vec3 CalcDirLightAss(dirLgt light, vec3 normal, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExponent);
     // combine results
 
     vec3 ambient = vec3(0);
     vec3 diffuse = vec3(0);
     vec3 specular = vec3(0);
 
-    vec3 objCol = vec3(1);
+    vec3 objCol = Color.rgb;
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
 
 
     if(alp)
         {
-            vec3 diffTex = vec3(texture(aspMaterial.texture_diffuse1, TexCoord));
-            diffTex += vec3(texture(aspMaterial.texture_diffuse2, TexCoord));
-            diffTex += vec3(texture(aspMaterial.texture_diffuse3, TexCoord));
+            vec4 diffTex = texture(aspMaterial.texture_diffuse1, TexCoord);
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse2, TexCoord));
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse3, TexCoord));
 
-            diffuse = diff * light.diffuse * diffTex;
-            ambient = light.ambient * diffTex;
+            diffuse = diff * light.diffuse * diffTex.rgb;
+            ambient = light.ambient * diffTex.rgb;
         }
         else
         {
             ambient = light.ambient * objCol;
             diffuse = diff * light.diffuse * objCol;
         }
-    if(alp)
+    if(alpSpec)
     {
         specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
-        specular += vec3(texture(aspMaterial.texture_specular2, TexCoord)) * spec * light.specular;
+        //specular += vec3(texture(aspMaterial.texture_specular2, TexCoord)) * spec * light.specular;
     }
     else 
-            specular = spec * light.specular;
+            specular = vec3(0);
 
     return (ambient + diffuse + specular);
 }
@@ -334,7 +349,7 @@ vec3 CalcPointLightAss(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExponent);
     // attenuation
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -343,31 +358,31 @@ vec3 CalcPointLightAss(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 diffuse;
     vec3 specular;
 
-    vec3 objCol = vec3(1);
+    vec3 objCol = Color.rgb;
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
     
     if(alp)
         {
-            vec3 diffTex = vec3(texture(aspMaterial.texture_diffuse1, TexCoord));
-            //diffTex += vec3(texture(aspMaterial.texture_diffuse2, TexCoord));
-            //diffTex += vec3(texture(aspMaterial.texture_diffuse3, TexCoord));
+            vec4 diffTex = texture(aspMaterial.texture_diffuse1, TexCoord);
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse2, TexCoord));
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse3, TexCoord));
 
-            diffuse = diff * light.diffuse * diffTex;
-            ambient = light.ambient * diffTex;
+            diffuse = diff * light.diffuse * diffTex.rgb;
+            ambient = light.ambient * diffTex.rgb;
         }
         else
         {
             ambient = light.ambient * objCol;
             diffuse = diff * light.diffuse * objCol;
         }
-    if(alp)
+    if(alpSpec)
     {
-            specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
+        specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
         //specular += vec3(texture(aspMaterial.texture_specular2, TexCoord)) * spec * light.specular;
     }
-        else 
-            specular = spec * light.specular;
+    else 
+            specular = vec3(0);
 
     ambient *= attenuation;
     diffuse *= attenuation;
@@ -382,7 +397,7 @@ vec3 CalcFlashLightAss(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     float diff = max(dot(normal, lightDir), 0.0);
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), specularExponent);
     // attenuation
     float distance = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -395,32 +410,35 @@ vec3 CalcFlashLightAss(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
     vec3 diffuse;
     vec3 specular;
 
-    vec3 objCol = vec3 (1);
+    vec3 objCol = Color.rgb;
     //if(useMainTex) objCol = objCol = vec3(material.mainVec);
     //else objCol = vec3(material.mainVec);
 
 
     if(alp)
         {
-            vec3 diffTex = vec3(texture(aspMaterial.texture_diffuse1, TexCoord));
-            //diffTex += vec3(texture(aspMaterial.texture_diffuse2, TexCoord));
-            //diffTex += vec3(texture(aspMaterial.texture_diffuse3, TexCoord));
+            vec4 diffTex = texture(aspMaterial.texture_diffuse1, TexCoord);
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse2, TexCoord));
+            //diffTex += vec4(texture(aspMaterial.texture_diffuse3, TexCoord));
+            
+            if(diffTex.a < 0.1) discard;
 
-            diffuse = diff * light.diffuse * diffTex;
-            ambient = light.ambient * diffTex;
+            diffuse = diff * light.diffuse * diffTex.rgb * objCol;
+            ambient = light.ambient * diffTex.rgb * objCol;
         }
         else
         {
-            ambient = light.ambient * objCol * material.ambVec;
-            diffuse = diff * light.diffuse * objCol * material.diffVec;
+            ambient = light.ambient * objCol;
+            diffuse = diff * light.diffuse * objCol;
         }
-    if(alp)
-        {
-                specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
+    if(alpSpec)
+    {
+        specular += vec3(texture(aspMaterial.texture_specular1, TexCoord)) * spec * light.specular;
         //specular += vec3(texture(aspMaterial.texture_specular2, TexCoord)) * spec * light.specular;
-}   
-else 
-            specular = spec * light.specular * material.specVec;
+    }
+    else 
+            specular = vec3(0);
+
     ambient *= attenuation * intensity;
     diffuse *= attenuation * intensity;
     specular *= attenuation * intensity;

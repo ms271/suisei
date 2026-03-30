@@ -18,6 +18,5 @@ public:
     ~texture();
     texture(int index, std::string address);
 
-    void set(int index, std::string address);
     void run(shader& ourShader, std::string texPath) const;
 };
