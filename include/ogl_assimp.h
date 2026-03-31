@@ -1,8 +1,25 @@
 #pragma once
 
 #include "ogl_presets.h"
-#include "ogl_texture.h"
-#include "ogl_object.h"
+#include "ogl_shader.h"
+
+struct aTexture {
+    unsigned int id;
+    std::string type;
+};
+
+struct aVertex {
+    glm::vec3 Position;
+    glm::vec3 Normal;
+    glm::vec2 TexCoords;
+    glm::vec3 Color;
+};
+
+struct aMaterial
+{
+    glm::vec3 diffuseColor;
+
+};
 
 class aMesh {
 public:

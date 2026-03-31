@@ -51,6 +51,10 @@ struct flashLgt
 
 #define NR_POS_LIGHTS 4
 
+uniform posLgt[NR_POS_LIGHTS] posLight;
+uniform dirLgt dirLight;
+uniform flashLgt flashLight;
+
 //cube Rendering Settings
 
 struct matrl
@@ -82,9 +86,6 @@ uniform float specularStrength;
 uniform float specularExponent;
 
 uniform matrl material;
-uniform posLgt[NR_POS_LIGHTS] posLight;
-uniform dirLgt dirLight;
-uniform flashLgt flashLight;
 
 vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -93,11 +94,43 @@ vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
 //Assimp Render Settings
 bool assimp;
 
+#define MAXTEX 16
+
+uniform sampler2D asiTexture[MAXTEX];
+uniform int asiTexType[MAXTEX];
+
+struct asiMatrl
+{
+    vec3 base;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+
+    float specularStrength;
+    float specularExponent;
+    
+    float opacity;
+
+    vec3 transparent;
+    vec3 emmissive;
+    float reflectivity;
+    float shininess;
+    float bumpScaling;
+};
+
+vec3 asiCalcDirLight(dirLgt light, vec3 normal, vec3 viewDir);
+vec3 asiCalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
+vec3 asiCalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
+
 void main()
 {
     if(assimp)
     {
-    
+        vec3 diffuse, ambient, specular;
+        vec3 norm = normalize(Normal);
+        vec3 viewDir = normalize(camPos - FragPos);
+        vec3 result = vec3(0);
+
     }
     if(!flatShade)
     {
@@ -117,7 +150,6 @@ void main()
             result += CalcPointLight(posLight[i], norm, FragPos, viewDir);
         }
 
-        
         result += CalcDirLight(dirLight, norm, viewDir);
         
         if(flashLight.constant != 0)

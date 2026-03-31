@@ -1,11 +1,11 @@
 #include"../include/ogl_assimp.h"
 
-aMesh::aMesh(std::vector<aVertex> vertices, std::vector<unsigned int> indices, std::vector<aTexture> textures)
+aMesh::aMesh(std::vector<aVertex> VErtices, std::vector<unsigned int> INdices, std::vector<aTexture> TExtures)
 {
-    this->vertices = vertices;
-    this->indices = indices;
-    this->textures = textures;
-
+    this->vertices = VErtices;
+    this->indices = INdices;
+    this->textures = TExtures;
+    
     SetupMesh();
 }
 
@@ -30,12 +30,15 @@ void aMesh::SetupMesh()
     glEnableVertexAttribArray(0);
     //channel, no of entries in block, type, normalization, size of block, offset from start of block
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)0);
-    // vertex normals
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Normal));
     // vertex texture coords
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, TexCoords));
+    // vertex normals
     glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, TexCoords));
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Normal));
+    // vertex Color
+    glEnableVertexAttribArray(3);
+    glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(aVertex), (void*)offsetof(aVertex, Color));
 
     glBindVertexArray(0);
 }

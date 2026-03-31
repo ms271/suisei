@@ -6,11 +6,6 @@
 
 inline int texCount = 0;
 
-struct aTexture {
-    unsigned int id;
-    std::string type;
-};
-
 class cTexture
 {
 public:
