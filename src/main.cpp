@@ -1,5 +1,3 @@
-#define STB_IMAGE_IMPLEMENTATION
-
 #include "../include/ogl_presets.h"
 #include "../include/ogl_utils.h"
 #include "../include/ogl_shader.h"
