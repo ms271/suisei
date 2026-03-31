@@ -73,6 +73,7 @@ public:
     int vertexSize = 8;
     const std::vector<float>* v = &cube_model;
 
+    cMesh(const std::vector<float> &vertices = cube_model);
     void buffer();
     ~cMesh();
     void del();

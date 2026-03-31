@@ -36,3 +36,19 @@ private:
 
     void SetupMesh();
 };
+
+class aModel
+{
+public:
+    aModel(std::string path);
+    void Draw(Shader& shader);
+private:
+    // model data
+    std::vector<aMesh> meshes;
+    std::string directory;
+
+    void loadModel(std::string& path);
+    void processNode(aiNode* node, const aiScene* scene);
+    aMesh processMesh(aiMesh* mesh, const aiScene* scene);
+    std::vector<aTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, std::string typeName);
+};

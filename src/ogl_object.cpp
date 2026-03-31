@@ -82,3 +82,9 @@ void cMesh::unbind()
     glBindVertexArray(0);
     return;
 }
+
+cMesh::cMesh(const std::vector<float>& vertices)
+{
+    v = &vertices;
+    buffer();
+}

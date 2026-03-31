@@ -60,3 +60,63 @@ void aMesh::Draw(Shader& shader)
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+aModel::aModel(std::string path)
+{
+    loadModel(path);
+}
+
+void aModel::loadModel(std::string& path)
+{
+//make and add import to a scene
+    Assimp::Importer import;
+    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+//error message for scene
+    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+    {
+        std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+        return;
+    }
+//save directory
+    directory = path.substr(0, path.find_last_of('/'));
+//recursive processing
+    processNode(scene->mRootNode, scene);
+}
+
+void aModel::processNode(aiNode* node, const aiScene* scene)
+{
+    // process all the node's meshes (if any)
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+        aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+        meshes.push_back(processMesh(mesh, scene));
+    }
+    // then do the same for each of its children
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+        processNode(node->mChildren[i], scene);
+    }
+}
+
+aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
+{
+    std::vector<aVertex> vertices;
+    std::vector<unsigned int> indices;
+    std::vector<aTexture> textures;
+
+    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    {
+        aVertex vertex;
+        // process vertex positions, normals and texture coordinates
+        vertices.push_back(vertex);
+    }
+    // process indices
+    
+    // process material
+    if (mesh->mMaterialIndex >= 0)
+    {
+    
+    }
+
+    return aMesh(vertices, indices, textures);
+}

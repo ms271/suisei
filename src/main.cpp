@@ -20,7 +20,6 @@ int main()
     glm::mat4 trans = glm::mat4(1.0f);
     
     cMesh cubeMesh;
-    cubeMesh.buffer();
 
     cObject cube1;
     
@@ -44,7 +43,6 @@ int main()
     float bggreen = 0.0f;
     float bgblue = 0.0f;
     glEnable(GL_DEPTH_TEST);
-    
     
     while (!glfwWindowShouldClose(ourWindow.window))
     {
