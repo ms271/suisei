@@ -23,12 +23,12 @@ int main()
     mesh cubeMesh;
     cubeMesh.buffer();
 
-    ass_model mesh1("models/yae_miko.glb");
+    ass_model mesh1("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb");
     
     glm::mat4 transform1 = glm::mat4 (1);
-    //transform1 = glm::rotate(transform1, glm::radians(90.0f), glm::vec3(1, 0, 0));
-    transform1 = glm::scale(transform1, glm::vec3(2));
-    mesh1.modelTransform = transform1;
+    ////transform1 = glm::rotate(transform1, glm::radians(90.0f), glm::vec3(1, 0, 0));
+    //transform1 = glm::scale(transform1, glm::vec3(2));
+    //mesh1.modelTransform = transform1;
 
     //texture texture1(1, "textures/container2.png");
     //texture texture2(2, "textures/container2_specular.png");
@@ -144,7 +144,9 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
-
+        
+        transform1 = glm::translate(transform1, glm::vec3(0, 0.01, 0));
+        mesh1.modelTransform = transform1;
         //light1.run(ourShader);
         light2.run(ourShader);
 
@@ -154,7 +156,7 @@ int main()
         //light2.run(ourShader);
         //light3.run(ourShader);
 
-        cube2.draw(model, ourShader, cam1);
+        //cube2.draw(model, ourShader, cam1);
         //cube4.draw(model, ourShader, cam1);
         //cube3.draw(model, ourShader, cam1);
         //cube1.draw(model, ourShader, cam1);
