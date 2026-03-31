@@ -97,7 +97,7 @@ bool assimp;
 #define MAXTEX 16
 
 uniform sampler2D asiTexture[MAXTEX];
-uniform int asiTexType[MAXTEX];
+uniform int       asiTexType[MAXTEX];
 
 struct asiMatrl
 {

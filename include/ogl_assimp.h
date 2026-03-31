@@ -5,7 +5,7 @@
 
 struct aTexture {
     unsigned int id;
-    std::string type;
+    unsigned int type;
 };
 
 struct aVertex {

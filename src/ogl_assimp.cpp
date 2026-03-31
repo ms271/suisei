@@ -42,3 +42,21 @@ void aMesh::SetupMesh()
 
     glBindVertexArray(0);
 }
+
+void aMesh::Draw(Shader& shader)
+{
+//textures have been preloaded into their respective ids, what we have to do is bind them at their respective postions
+    
+    for (int i = 0; i < textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        shader.setInt("asiTexture[" + std::to_string(i) + "]", textures[i].id);
+        shader.setInt("asiTexType[" + std::to_string(i) + "]", textures[i].type);//0 means diffuse
+        glBindTexture(GL_TEXTURE_2D, textures[i].id);
+    }
+    glActiveTexture(GL_TEXTURE0);
+
+    glBindVertexArray(VAO);
+    glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+    glBindVertexArray(0);
+}

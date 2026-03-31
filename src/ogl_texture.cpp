@@ -79,6 +79,7 @@ void cTexture::run(Shader& ourShader, std::string texPath)
     glBindTexture(GL_TEXTURE_2D, id);
     ourShader.use();
     ourShader.setInt(texPath, index - 1);
+    glActiveTexture(GL_TEXTURE0);
     return;
 }
 
