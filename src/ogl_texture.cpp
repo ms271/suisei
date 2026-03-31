@@ -1,6 +1,6 @@
 #include "../include/ogl_texture.h"
 
-texture::texture(int indexx, std::string address)
+cTexture::cTexture(int indexx, std::string address)
 
 {
     index = indexx;
@@ -36,9 +36,9 @@ texture::texture(int indexx, std::string address)
     stbi_image_free(data);
 }
 
-texture::texture(){}
+cTexture::cTexture(){}
 
-void texture::set(int indexx, std::string address)
+void cTexture::set(int indexx, std::string address)
 {
     index = indexx;
     glGenTextures(1, &id);
@@ -73,7 +73,7 @@ void texture::set(int indexx, std::string address)
     stbi_image_free(data);
 }
 
-void texture::run(shader& ourShader, std::string texPath)
+void cTexture::run(Shader& ourShader, std::string texPath)
 {
     glActiveTexture(GL_TEXTURE0 + (index - 1));
     glBindTexture(GL_TEXTURE_2D, id);
@@ -82,7 +82,7 @@ void texture::run(shader& ourShader, std::string texPath)
     return;
 }
 
-texture::~texture()
+cTexture::~cTexture()
 {
     if (id != 0)
     {

@@ -11,7 +11,7 @@
 int main()
 {
     initWindow ourWindow;//in util
-    shader ourShader("shader/vertex.glsl", "shader/fragment.glsl");//in shader
+    Shader ourShader("shader/vertex.glsl", "shader/fragment.glsl");//in shader
     camera cam1;//in cam
     set_callback(ourWindow.window, cam1);//in cam
 
@@ -32,20 +32,20 @@ int main()
         glm::vec3(-1.3f,  1.0f, -1.5f)
     };
 
-    mesh cubeMesh;
+    cMesh cubeMesh;
     cubeMesh.buffer();
 
-    object cube1;
+    cObject cube1;
     
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
 
-    dirLgt ambLight;
+    cDirLgt ambLight;
     ambLight.ambient = glm::vec3(0.3);
     ambLight.diffuse = glm::vec3(0);
     ambLight.specular = glm::vec3(0);
 
-    light light1;
+    cLight light1;
     light1.dirLight = &ambLight;
     light1.lightType = 1;
     

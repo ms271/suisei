@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include "ogl_utils.h"
 
-class shader
+class Shader
 {
 public:
     // the program ID
@@ -18,9 +18,9 @@ public:
     mutable std::unordered_map<std::string,int> address;
 
     // constructor reads and builds the shader
-    shader(const char* vertexPath, const char* fragmentPath);
+    Shader(const char* vertexPath, const char* fragmentPath);
     //destructor
-    ~shader();
+    ~Shader();
     // use/activate the shader
     void use();
     // utility uniform functions

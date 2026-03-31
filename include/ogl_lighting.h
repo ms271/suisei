@@ -2,7 +2,7 @@
 #include "ogl_presets.h"
 #include "ogl_shader.h"
 
-class posLgt
+class cPosLgt
 {
 public:
     
@@ -17,7 +17,7 @@ public:
     float quadratic = 0.032f;
 };
 
-class flashLgt
+class cFlashLgt
 {
 public:
     glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
@@ -34,7 +34,7 @@ public:
     float quadratic = 0.032f;
 };
 
-class dirLgt
+class cDirLgt
 {
 public:
     glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
@@ -44,14 +44,14 @@ public:
     glm::vec3 specular = glm::vec3(1.0f, 1.0f, 1.0f);
 };
 
-class light
+class cLight
 {
 public:
-    posLgt* posLight;
-    dirLgt* dirLight;
-    flashLgt* flashLight;
+    cPosLgt* posLight;
+    cDirLgt* dirLight;
+    cFlashLgt* flashLight;
     int lightType = 0;//0 pos, 1 dir, 2 flash
     int index = 0;
 
-    void run(shader& ourShader);
+    void run(Shader& ourShader);
 };

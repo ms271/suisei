@@ -8,6 +8,12 @@
 
 class camera;
 
+struct aVertex {
+    glm::vec3 Position;
+    glm::vec3 Normal;
+    glm::vec2 TexCoords;
+};
+
 static const inline std::vector<float> cube_model = {
         //position            //tex coord  //normal
         -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,  0.0f,  0.0f, -1.0f,
@@ -53,7 +59,7 @@ static const inline std::vector<float> cube_model = {
         -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,  0.0f,  1.0f,  0.0f
 };
 
-class mesh
+class cMesh
 {
 public:
     unsigned int VBO = 0, VAO = 0;
@@ -61,32 +67,32 @@ public:
     const std::vector<float>* v = &cube_model;
 
     void buffer();
-    ~mesh();
+    ~cMesh();
     void del();
     void bind();
     void unbind();
 };
 
-class matrl
+class cMatrl
 {
 public:
     glm::vec3 mainVec = glm::vec3(1.0f, 1.0f, 1.0f);
-    texture* mainTex;
+    cTexture* mainTex;
 
     glm::vec3 ambVec = glm::vec3(1.0f, 0.5f, 0.31f);
-    texture* diffTex;
+    cTexture* diffTex;
     glm::vec3 diffVec = glm::vec3(1.0f, 0.5f, 0.31f);
     
-    texture* specTex;
+    cTexture* specTex;
     glm::vec3 specVec = glm::vec3(0.5f, 0.5f, 0.5f);
     float shininess = 32.0f;
 };
 
-void simpleWorldDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p);
+void simpleWorldDraw(glm::mat4& model, Shader& ourShader, cMesh* objMesh, std::vector<glm::vec3>& p);
 
-void simpleHudDraw(glm::mat4& model, shader& ourShader, mesh* objMesh, std::vector<glm::vec3>& p, camera& cam);
+void simpleHudDraw(glm::mat4& model, Shader& ourShader, cMesh* objMesh, std::vector<glm::vec3>& p, camera& cam);
 
-class object
+class cObject
 {
 public:
     glm::vec3 color = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -100,15 +106,15 @@ public:
     int useLightType = 0;//0 posLight, 1 dirLight, 2 flashLight
     bool flatShade = 0;
 
-    mesh* objMesh;
-    matrl material;
-    texture* flatTex;
+    cMesh* objMesh;
+    cMatrl material;
+    cTexture* flatTex;
 
     void setTexture();
-    void draw (glm::mat4& model, shader& ourShader, camera& cam);
+    void draw (glm::mat4& model, Shader& ourShader, camera& cam);
 
-    void (*drawWorld)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&);
-    void (*drawHUD)(glm::mat4&, shader&, mesh*, std::vector<glm::vec3>&, camera&);
+    void (*drawWorld)(glm::mat4&, Shader&, cMesh*, std::vector<glm::vec3>&);
+    void (*drawHUD)(glm::mat4&, Shader&, cMesh*, std::vector<glm::vec3>&, camera&);
     
     int type = 1;//1 == world, 0 == hud
 

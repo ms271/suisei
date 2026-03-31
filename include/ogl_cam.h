@@ -3,7 +3,7 @@
 #include "ogl_presets.h"
 #include "ogl_lighting.h"
 
-class flashLgt;
+class cFlashLgt;
 
 class camera
 {
@@ -33,7 +33,7 @@ public:
     glm::mat4 PROJ = glm::perspective(glm::radians(FOV), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);;
 
 
-    flashLgt* camLight;
+    cFlashLgt* camLight;
 
     void run(GLFWwindow* window);
     void cam_movement(GLFWwindow* window);

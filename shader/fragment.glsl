@@ -1,18 +1,15 @@
 #version 330 core
 
-struct matrl
-{
-    sampler2D mainTex;
-    vec3 mainVec;
+//outs and ins
 
-    vec3 ambVec;
-    sampler2D diffTex;
-    vec3 diffVec;
+out vec4 FragColor;
 
-    sampler2D specTex;
-    vec3 specVec;
-    float shininess;
-};
+in vec2 TexCoord;
+in vec3 Normal;
+in vec3 FragPos;  
+in vec3 Color;
+
+//lighting
 
 struct posLgt 
 {
@@ -54,11 +51,21 @@ struct flashLgt
 
 #define NR_POS_LIGHTS 4
 
-out vec4 FragColor;
+//cube Rendering Settings
 
-in vec2 TexCoord;
-in vec3 Normal;
-in vec3 FragPos;  
+struct matrl
+{
+    sampler2D mainTex;
+    vec3 mainVec;
+
+    vec3 ambVec;
+    sampler2D diffTex;
+    vec3 diffVec;
+
+    sampler2D specTex;
+    vec3 specVec;
+    float shininess;
+};
 
 uniform vec3 object_color;
 
@@ -83,8 +90,15 @@ vec3 CalcDirLight(dirLgt light, vec3 normal, vec3 viewDir);
 vec3 CalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir);
 
+//Assimp Render Settings
+bool assimp;
+
 void main()
 {
+    if(assimp)
+    {
+    
+    }
     if(!flatShade)
     {
         vec3 diffuse, ambient, specular;

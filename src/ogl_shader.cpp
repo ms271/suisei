@@ -1,6 +1,6 @@
 #include "../include/ogl_shader.h"
 
-shader::shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const char* vertexPath, const char* fragmentPath)
 {
     std::string vertexCode;
     std::string fragmentCode;
@@ -58,17 +58,17 @@ shader::shader(const char* vertexPath, const char* fragmentPath)
     glDeleteShader(fragment);
 }
 
-shader::~shader()
+Shader::~Shader()
 {
     if (ID != 0) glDeleteProgram(ID);
 }
 
-void shader::use()
+void Shader::use()
 {
     glUseProgram(ID);
 }
 
-int shader::find(const std::string name) const
+int Shader::find(const std::string name) const
 {
     if(address.find(name) != address.end())
         return address[name];
@@ -85,59 +85,59 @@ int shader::find(const std::string name) const
     return location;
 }
 
-void shader::setBool(const std::string& name, bool value) const
+void Shader::setBool(const std::string& name, bool value) const
 {
     glUniform1i(find(name), (int)value);
 }
 // ------------------------------------------------------------------------
-void shader::setInt(const std::string& name, int value) const
+void Shader::setInt(const std::string& name, int value) const
 {
     glUniform1i(find(name), value);
 }
 // ------------------------------------------------------------------------
-void shader::setFloat(const std::string& name, float value) const
+void Shader::setFloat(const std::string& name, float value) const
 {
     glUniform1f(find(name), value);
 }
 // ------------------------------------------------------------------------
-void shader::setVec2(const std::string& name, const glm::vec2& value) const
+void Shader::setVec2(const std::string& name, const glm::vec2& value) const
 {
     glUniform2fv(find(name), 1, &value[0]);
 }
-void shader::setVec2(const std::string& name, float x, float y) const
+void Shader::setVec2(const std::string& name, float x, float y) const
 {
     glUniform2f(find(name), x, y);
 }
 // ------------------------------------------------------------------------
-void shader::setVec3(const std::string& name, const glm::vec3& value) const
+void Shader::setVec3(const std::string& name, const glm::vec3& value) const
 {
     glUniform3fv(find(name), 1, &value[0]);
 }
-void shader::setVec3(const std::string& name, float x, float y, float z) const
+void Shader::setVec3(const std::string& name, float x, float y, float z) const
 {
     glUniform3f(find(name), x, y, z);
 }
 // ------------------------------------------------------------------------
-void shader::setVec4(const std::string& name, const glm::vec4& value) const
+void Shader::setVec4(const std::string& name, const glm::vec4& value) const
 {
     glUniform4fv(find(name), 1, &value[0]);
 }
-void shader::setVec4(const std::string& name, float x, float y, float z, float w) const
+void Shader::setVec4(const std::string& name, float x, float y, float z, float w) const
 {
     glUniform4f(find(name), x, y, z, w);
 }
 // ------------------------------------------------------------------------
-void shader::setMat2(const std::string& name, const glm::mat2& mat) const
+void Shader::setMat2(const std::string& name, const glm::mat2& mat) const
 {
     glUniformMatrix2fv(find(name), 1, GL_FALSE, &mat[0][0]);
 }
 // ------------------------------------------------------------------------
-void shader::setMat3(const std::string& name, const glm::mat3& mat) const
+void Shader::setMat3(const std::string& name, const glm::mat3& mat) const
 {
     glUniformMatrix3fv(find(name), 1, GL_FALSE, &mat[0][0]);
 }
 // ------------------------------------------------------------------------
-void shader::setMat4(const std::string& name, const glm::mat4& mat) const
+void Shader::setMat4(const std::string& name, const glm::mat4& mat) const
 {
     glUniformMatrix4fv(find(name), 1, GL_FALSE, &mat[0][0]);
 }

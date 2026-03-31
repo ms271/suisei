@@ -6,15 +6,20 @@
 
 inline int texCount = 0;
 
-class texture
+struct aTexture {
+    unsigned int id;
+    std::string type;
+};
+
+class cTexture
 {
 public:
     unsigned int id;
     int index;
 
-    texture();
-    ~texture();
+    cTexture();
+    ~cTexture();
     void set(int index, std::string address);
-    texture(int index, std::string address);
-    void run(shader& ourShader, std::string texPath);
+    cTexture(int index, std::string address);
+    void run(Shader& ourShader, std::string texPath);
 };

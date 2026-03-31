@@ -1,6 +1,6 @@
 #include "../include/ogl_object.h"
 
-void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
+void cObject::draw(glm::mat4& model, Shader& ourShader, camera& cam)
 {
     objMesh->bind();
     ourShader.use();
@@ -42,7 +42,7 @@ void object::draw(glm::mat4& model, shader& ourShader, camera& cam)
     objMesh->unbind();
 }
 
-void mesh::buffer()
+void cMesh::buffer()
 {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -66,18 +66,18 @@ void mesh::buffer()
     return;
 }
 
-mesh::~mesh()
+cMesh::~cMesh()
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
 }
 
-void mesh::bind()
+void cMesh::bind()
 {
     glBindVertexArray(VAO);
     return;
 }
-void mesh::unbind()
+void cMesh::unbind()
 {
     glBindVertexArray(0);
     return;

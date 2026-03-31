@@ -1,6 +1,6 @@
 #include "../include/ogl_lighting.h"
 
-void light::run(shader& ourShader)
+void cLight::run(Shader& ourShader)
 {
     if (lightType == 0)
     {
