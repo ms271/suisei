@@ -43,7 +43,7 @@ public:
     glm::mat4 Transform;
 
     aMesh(std::vector<aVertex> vertices, std::vector<unsigned int> indices, std::vector<aTexture> textures, aMaterial MAterial);
-    void Draw(Shader& shader);
+    void Draw(Shader& shader, glm::mat4& worldTransform);
 private:
     //  render data
     unsigned int VAO, VBO, EBO;
@@ -56,13 +56,13 @@ class aModel
 public:
     aModel(std::string path);
     void Draw(Shader& shader);
+    glm::mat4 modelTransform = glm::mat4(1.0f);
 private:
     // model data
     std::vector<aMesh> meshes;
     std::string directory;
     std::unordered_map <std::string, aTexture> texLoaded;
-    glm::mat4 modelTransform = glm::mat4(1.0f);
-
+    
     void loadModel(std::string& path);
     void processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransform);
     aMesh processMesh(aiMesh* mesh, const aiScene* scene);

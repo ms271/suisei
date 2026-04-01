@@ -44,7 +44,7 @@ void aMesh::SetupMesh()
     glBindVertexArray(0);
 }
 
-void aMesh::Draw(Shader& shader)
+void aMesh::Draw(Shader& shader, glm::mat4& worldTransform)
 {
 //textures and materials have been preloaded into their respective ids, what we have to do is bind them at their respective postions
     
@@ -73,6 +73,13 @@ void aMesh::Draw(Shader& shader)
     }
     glActiveTexture(GL_TEXTURE0);
 
+    glm::mat4 modelTrans = Transform * worldTransform;
+
+    shader.setMat4("model", modelTrans);
+
+    glm::mat3 normMatrix = glm::mat3(glm::transpose(glm::inverse(Transform)));
+    shader.setMat3("normMatrix", normMatrix);
+
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
@@ -85,13 +92,9 @@ aModel::aModel(std::string path)
 
 void aModel::Draw(Shader& shader)
 {
-    shader.setMat4("model", modelTransform);
-    glm::mat3 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(modelTransform))));
-    shader.setMat3("normMatrix", normalMatrix);
     shader.setBool("assimp", true);
-
     for (unsigned int i = 0; i < meshes.size(); i++)
-        meshes[i].Draw(shader);
+        meshes[i].Draw(shader, modelTransform);
 
     shader.setBool("assimp", false);
 }
