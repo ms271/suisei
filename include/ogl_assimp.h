@@ -57,6 +57,7 @@ public:
     aModel(std::string path);
     void Draw(Shader& shader);
     glm::mat4 modelTransform = glm::mat4(1.0f);
+    bool brokenTransform = false;
 private:
     // model data
     std::vector<aMesh> meshes;

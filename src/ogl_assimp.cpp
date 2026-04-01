@@ -103,8 +103,24 @@ void aModel::loadModel(std::string& path)
 {
 //make and add import to a scene
     Assimp::Importer import;
-    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-//error message for scene
+
+    unsigned int importFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals;
+
+    std::string extension = path.substr(path.find_last_of('.') + 1);
+
+    // 3. Dynamically apply the UV flip ONLY for formats that need it
+    if (extension != "glb" && extension != "gltf")
+    {
+        importFlags |= aiProcess_FlipUVs;
+    }
+
+    if (brokenTransform)
+    {
+        importFlags |= aiProcess_PreTransformVertices;
+    }
+
+    const aiScene* scene = import.ReadFile(path, importFlags);
+
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
         std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;

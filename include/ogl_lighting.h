@@ -22,8 +22,8 @@ class cFlashLgt
 public:
     glm::vec3 position = glm::vec3(1.0f, 0.5f, 0.31f);
     glm::vec3 direction = glm::vec3(1.0f, 0.5f, 0.31f);
-    float cutOff = glm::cos(glm::radians(20.0f));
-    float cutOff2 = glm::cos(glm::radians(22.0f));
+    float cutOff = glm::cos(glm::radians(40.0f));
+    float cutOff2 = glm::cos(glm::radians(42.0f));
 
     glm::vec3 ambient = glm::vec3(0.1f, 0.1f, 0.1f);
     glm::vec3 diffuse = glm::vec3(0.5f, 0.5f, 0.5f);
