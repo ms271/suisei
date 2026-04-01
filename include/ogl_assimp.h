@@ -40,6 +40,7 @@ public:
     std::vector<unsigned int> indices;
     std::vector<aTexture>     textures;
     aMaterial material;
+    glm::mat4 Transform;
 
     aMesh(std::vector<aVertex> vertices, std::vector<unsigned int> indices, std::vector<aTexture> textures, aMaterial MAterial);
     void Draw(Shader& shader);
@@ -63,7 +64,7 @@ private:
     glm::mat4 modelTransform = glm::mat4(1.0f);
 
     void loadModel(std::string& path);
-    void processNode(aiNode* node, const aiScene* scene);
+    void processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransform);
     aMesh processMesh(aiMesh* mesh, const aiScene* scene);
     std::vector<aTexture> loadMaterialTextures(aiMaterial* mat, aiTextureType type, const aiScene* scene);
 };

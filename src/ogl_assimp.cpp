@@ -110,10 +110,10 @@ void aModel::loadModel(std::string& path)
 //save directory
     directory = path.substr(0, path.find_last_of('/'));
 //recursive processing
-    processNode(scene->mRootNode, scene);
+    processNode(scene->mRootNode, scene, modelTransform);
 }
 
-void aModel::processNode(aiNode* node, const aiScene* scene)
+void aModel::processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransform)
 {
     glm::mat4 localTransform = aiToGlm(node->mTransformation);
 
@@ -123,7 +123,7 @@ void aModel::processNode(aiNode* node, const aiScene* scene)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        ass_mesh newMesh = processMesh(mesh, scene);
+        aMesh newMesh = processMesh(mesh, scene);
         newMesh.Transform = globalNodeTransform;
         meshes.push_back(std::move(newMesh));
     }
