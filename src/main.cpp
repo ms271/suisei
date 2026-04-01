@@ -22,7 +22,6 @@ int main()
     cMesh cubeMesh;
 
     cObject cube1;
-    
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
 
