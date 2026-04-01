@@ -98,8 +98,8 @@ uniform bool assimp;
 
 uniform sampler2D asiTexture[MAXTEX];
 uniform int       asiTexType[MAXTEX];
-uniform float     asiTexBlend[MAXTEX];
-uniform int       asiTexBlendOp[MAXTEX];
+//uniform float     asiTexBlend[MAXTEX];
+//uniform int       asiTexBlendOp[MAXTEX];
 uniform int       asiNumOfTextures;
 
 struct asiMatrl
@@ -143,8 +143,11 @@ void main()
             result += asiCalcPointLight(posLight[i], norm, FragPos, viewDir);
         }
 
-        result += asiCalcDirLight(dirLight, norm, viewDir);
-        
+        if(length(dirLight.diffuse) > 0.0 || length(dirLight.ambient) > 0.0) 
+        {
+            result += asiCalcDirLight(dirLight, norm, viewDir);
+        }
+
         if(flashLight.constant != 0)
         result += asiCalcFlashLight(flashLight, norm, FragPos, viewDir);
 
@@ -344,13 +347,13 @@ vec3 asiCalcDirLight(dirLgt light, vec3 normal, vec3 viewDir)
         if (asiTexType[i] == 1) 
         { // TYPE_DIFFUSE
             vec4 texColor = texture(asiTexture[i], TexCoord);
-            float weight = asiTexBlend[i]; // Grab the weight
-            int op = asiTexBlendOp[i];
+            //float weight = asiTexBlend[i]; // Grab the weight
+            //int op = asiTexBlendOp[i];
 
             if (isFirstDiffuse) 
             {
                 // If the base texture has a weight less than 1.0, it fades into the object's baseColor
-                finalDiffuse = texColor * weight; 
+                finalDiffuse = texColor;// * weight; 
                 isFirstDiffuse = false;
                 
             } 
@@ -359,35 +362,36 @@ vec3 asiCalcDirLight(dirLgt light, vec3 normal, vec3 viewDir)
                 if (texColor.a < 1.0) 
                 {
     // 1. If it has transparent pixels, the artist almost certainly wants a Mix (Decal)
-                    finalDiffuse = mix(finalDiffuse, texColor, texColor.a * weight);
+                    finalDiffuse = mix(finalDiffuse, texColor, texColor.a/* * weight */);
                 } 
                 else 
                 {
     // 2. If it is fully solid, respect the Assimp Math Operation
-                    finalDiffuse *= (texColor * weight);
+                    finalDiffuse *= (texColor/* * weight */);
                 }
             }
         }
         
         else if (asiTexType[i] == 2) 
         {
-            int op = asiTexBlendOp[i];
+            //int op = asiTexBlendOp[i];
             // Specular is usually grayscale, so we only need the RGB
             vec3 specColor = texture(asiTexture[i], TexCoord).rgb;
-            float weight = asiTexBlend[i];
+            //float weight = asiTexBlend[i];
 
             if (isFirstSpecular) 
             {
                 // First map establishes the base shininess map
-                finalSpecular = specColor * weight;
+                finalSpecular = specColor;// * weight;
                 isFirstSpecular = false;
             } 
             else 
             {
                 // Mix them based on the artist's Blend Factor (weight)
                 // mix(A, B, 0.5) perfectly averages them
-                if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
-                else finalSpecular *= (specColor * weight);
+                //if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
+                //else 
+                finalSpecular *= (specColor/* * weight */);
             }
         }
     }
@@ -428,50 +432,51 @@ vec3 asiCalcPointLight(posLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
         if (asiTexType[i] == 1 || asiTexType[i] == 12) 
         { // TYPE_DIFFUSE
             vec4 texColor = texture(asiTexture[i], TexCoord);
-            float weight = asiTexBlend[i]; // Grab the weight
-            int op = asiTexBlendOp[i];
+            //float weight = asiTexBlend[i]; // Grab the weight
+            //int op = asiTexBlendOp[i];
 
             if (isFirstDiffuse) 
             {
                 // If the base texture has a weight less than 1.0, it fades into the object's baseColor
-                finalDiffuse = texColor * weight; 
+                finalDiffuse = texColor;// * weight; 
                 isFirstDiffuse = false;
                 
             } 
             else 
             {
-                if (texColor.a < 1.0) 
-                {
+                //if (texColor.a < 1.0) 
+                //{
     // 1. If it has transparent pixels, the artist almost certainly wants a Mix (Decal)
-                    finalDiffuse = mix(finalDiffuse, texColor, texColor.a * weight);
-                } 
-                else 
+                    //finalDiffuse = mix(finalDiffuse, texColor, texColor.a * weight);
+                //} 
+                //else 
                 {
     // 2. If it is fully solid, respect the Assimp Math Operation
-                    finalDiffuse *= (texColor * weight);
+                    finalDiffuse *= (texColor/* * weight */);
                 }
             }
         }
         
         else if (asiTexType[i] == 2) 
         {
-            int op = asiTexBlendOp[i];
+            //int op = asiTexBlendOp[i];
             // Specular is usually grayscale, so we only need the RGB
             vec3 specColor = texture(asiTexture[i], TexCoord).rgb;
-            float weight = asiTexBlend[i];
+            //float weight = asiTexBlend[i];
 
             if (isFirstSpecular) 
             {
                 // First map establishes the base shininess map
-                finalSpecular = specColor * weight;
+                finalSpecular = specColor;// * weight;
                 isFirstSpecular = false;
             } 
             else 
             {
                 // Mix them based on the artist's Blend Factor (weight)
                 // mix(A, B, 0.5) perfectly averages them
-                if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
-                else finalSpecular *= (specColor * weight);
+                //if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
+                //else 
+                finalSpecular *= (specColor/* * weight */);
             }
         }
     }
@@ -519,50 +524,51 @@ vec3 asiCalcFlashLight(flashLgt light, vec3 normal, vec3 fragPos, vec3 viewDir)
         if (asiTexType[i] == 1) 
         { // TYPE_DIFFUSE
             vec4 texColor = texture(asiTexture[i], TexCoord);
-            float weight = asiTexBlend[i]; // Grab the weight
-            int op = asiTexBlendOp[i];
+            //float weight = asiTexBlend[i]; // Grab the weight
+            //int op = asiTexBlendOp[i];
 
             if (isFirstDiffuse) 
             {
                 // If the base texture has a weight less than 1.0, it fades into the object's baseColor
-                finalDiffuse = texColor * weight; 
+                finalDiffuse = texColor;// * weight; 
                 isFirstDiffuse = false;
                 
             } 
             else 
             {
-                if (texColor.a < 1.0) 
-                {
+                //if (texColor.a < 1.0) 
+                //{
     // 1. If it has transparent pixels, the artist almost certainly wants a Mix (Decal)
-                    finalDiffuse = mix(finalDiffuse, texColor, texColor.a * weight);
-                } 
-                else 
+                    //finalDiffuse = mix(finalDiffuse, texColor, texColor.a * weight);
+                //} 
+                //else 
                 {
     // 2. If it is fully solid, respect the Assimp Math Operation
-                    finalDiffuse *= (texColor * weight);
+                    finalDiffuse *= (texColor/* * weight */);
                 }
             }
         }
         
         else if (asiTexType[i] == 2) 
         {
-            int op = asiTexBlendOp[i];
+            //int op = asiTexBlendOp[i];
             // Specular is usually grayscale, so we only need the RGB
             vec3 specColor = texture(asiTexture[i], TexCoord).rgb;
-            float weight = asiTexBlend[i];
+            //float weight = asiTexBlend[i];
 
             if (isFirstSpecular) 
             {
                 // First map establishes the base shininess map
-                finalSpecular = specColor * weight;
+                finalSpecular = specColor;// * weight;
                 isFirstSpecular = false;
             } 
             else 
             {
                 // Mix them based on the artist's Blend Factor (weight)
                 // mix(A, B, 0.5) perfectly averages them
-                if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
-                else finalSpecular *= (specColor * weight);
+                //if(weight != 1.0f) finalSpecular = mix(finalSpecular, specColor, weight);
+                //else 
+                finalSpecular *= (specColor/* * weight */);
             }
         }
     }

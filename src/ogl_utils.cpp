@@ -37,6 +37,7 @@ initWindow::initWindow()
     glfwSwapInterval(1);
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    stbi_set_flip_vertically_on_load(true);
 }
 initWindow::~initWindow()
 {

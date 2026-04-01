@@ -34,8 +34,6 @@ int main()
     light1.lightType = 2;
     cam1.camLight = light1.flashLight;
     
-    stbi_set_flip_vertically_on_load(true);
-
     ourShader.use(); 
     
     float bgred = 0.0f;
@@ -58,12 +56,11 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
+        
+        light1.run(ourShader);
 
         model1.Draw(ourShader);
-
-        light1.run(ourShader);
-        
-        cube1.draw(model, ourShader, cam1);
+        //cube1.draw(model, ourShader, cam1);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();

@@ -59,15 +59,15 @@ void aMesh::Draw(Shader& shader)
 
     for (int i = 0; i < textures.size(); i++)
     {
-        if(i > 16) break;
+        if(i > 12) break;
         glActiveTexture(GL_TEXTURE0 + i);
-        shader.setInt("asiTexture[" + std::to_string(i) + "]", textures[i].id);
+        shader.setInt("asiTexture[" + std::to_string(i) + "]", i);
         
         if(textures[i].type == 12) textures[i].type = 1;
         
         shader.setInt("asiTexType[" + std::to_string(i) + "]", textures[i].type);//1 is diffuse, 2 is specular
-        shader.setFloat("asiTexBlend[" + std::to_string(i) + "]", textures[i].blend);
-        shader.setFloat("asiTexBlendOp[" + std::to_string(i) + "]", textures[i].blendOp);
+        //shader.setFloat("asiTexBlend[" + std::to_string(i) + "]", textures[i].blend);
+        //shader.setFloat("asiTexBlendOp[" + std::to_string(i) + "]", textures[i].blendOp);
 
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
@@ -164,6 +164,19 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
             vertex.TexCoords = glm::vec2(0.0f, 0.0f);
         }
 
+        if (mesh->HasVertexColors(0))
+        {
+            // Assimp stores colors as aiColor4D (RGBA), so we extract RGB
+            vertex.Color.x = mesh->mColors[0][i].r;
+            vertex.Color.y = mesh->mColors[0][i].g;
+            vertex.Color.z = mesh->mColors[0][i].b;
+        }
+        else
+        {
+            // The model has no vertex colors. Default to pure white so the lighting math doesn't multiply by zero!
+            vertex.Color = glm::vec3(1.0f, 1.0f, 1.0f);
+        }
+
         vertices.push_back(vertex);
     }
     // process indices
@@ -180,17 +193,17 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         
         for(int i = 1; i < 22; i++)
         {
-            if (textures.size() == 16)
+            if (textures.size() == 12)
             {
                 std::cout << "texture limit reached";
                 break;
             }
 
             std::vector<aTexture> Maps = loadMaterialTextures(material, (aiTextureType)i, scene);
-
+            if(Maps.size() != 0)
             textures.insert(textures.end(), Maps.begin(), Maps.end());
         }
-        std::cout << textures.size() << '\n';
+        std::cout <<"size - " << textures.size() << '\n';
         //base----------------------------------------------------------------------------------------------------------
         aiColor3D aiBase(1.0f, 1.0f, 1.0f);
 
@@ -251,12 +264,12 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         meshMat.specularColor = glm::vec3(aiSpecular.r, aiSpecular.g, aiSpecular.b);
 
         //shinyStrenth----------------------------------------------------------------------------------------------------------
-        float shinyStrength = 0.0f;
+        float shinyStrength = 1.0f;
 
         if (material->Get(AI_MATKEY_SHININESS_STRENGTH, shinyStrength) != AI_SUCCESS)
         {
             // Goal #4: Error handling if the model doesn't define a diffuse color
-            std::cout << "[Material Warning]: No shinyStrength found. Defaulting to 0.\n";
+            std::cout << "[Material Warning]: No shinyStrength found. Defaulting to 1.\n";
         }
         meshMat.specularStrength = shinyStrength;
         
