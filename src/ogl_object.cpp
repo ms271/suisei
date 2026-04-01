@@ -4,13 +4,14 @@ void cObject::draw(glm::mat4& model, Shader& ourShader, camera& cam)
 {
     objMesh->bind();
     ourShader.use();
+    ourShader.setBool("assimp", false);
 
     ourShader.setBool("flatShade", flatShade);
     if(flatShade)
     {
         ourShader.setBool("useFlatTex", useFlatTex);
         if (useFlatTex) flatTex->run(ourShader, "material.mainTex");
-        else ourShader.setVec3("material.mainVec", color);
+        else ourShader.setVec3("material.mainVec", material.mainVec);
     }
     else
     {

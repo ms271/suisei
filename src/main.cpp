@@ -7,6 +7,7 @@
 #include "../include/ogl_cam.h"
 #include "../include/ogl_object.h"
 #include "../include/ogl_draw.h"
+#include "../include/ogl_assimp.h"
 
 int main()
 {
@@ -20,19 +21,18 @@ int main()
     glm::mat4 trans = glm::mat4(1.0f);
     
     cMesh cubeMesh;
+    aModel model1("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb");
 
     cObject cube1;
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
 
-    cDirLgt ambLight;
-    ambLight.ambient = glm::vec3(0.3);
-    ambLight.diffuse = glm::vec3(0);
-    ambLight.specular = glm::vec3(0);
-
+    cFlashLgt flashLight;
+    
     cLight light1;
-    light1.dirLight = &ambLight;
-    light1.lightType = 1;
+    light1.flashLight = &flashLight;
+    light1.lightType = 2;
+    cam1.camLight = light1.flashLight;
     
     stbi_set_flip_vertically_on_load(true);
 
@@ -41,6 +41,7 @@ int main()
     float bgred = 0.0f;
     float bggreen = 0.0f;
     float bgblue = 0.0f;
+
     glEnable(GL_DEPTH_TEST);
     
     while (!glfwWindowShouldClose(ourWindow.window))
@@ -57,6 +58,8 @@ int main()
         ourShader.setVec3("camPos", cam1.cameraPos);
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
+
+        model1.Draw(ourShader);
 
         light1.run(ourShader);
         

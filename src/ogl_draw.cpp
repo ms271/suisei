@@ -28,7 +28,7 @@ void simpleHudDraw(glm::mat4& model, Shader& ourShader, cMesh* objMesh, std::vec
         model = glm::rotate(model, glm::radians(angle * time), glm::vec3(1.0f, 0.3f, 0.5f));
         model = glm::scale(model, glm::vec3(30.0f, 30.0f, 30.0f));
         ourShader.setMat4("model", model);
-        glm::mat4 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
+        glm::mat3 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(model))));
         ourShader.setMat3("normMatrix", normalMatrix);
 
         glDrawArrays(GL_TRIANGLES, 0, objMesh->v->size() / objMesh->vertexSize);

@@ -10,6 +10,8 @@ struct aTexture {
     unsigned int id;
     unsigned int type;//1 diffuse, 2 specular
     std::string path;
+    float blend;
+    float blendOp;
 };
 
 struct aVertex {
@@ -22,6 +24,12 @@ struct aVertex {
 struct aMaterial
 {
     glm::vec3 diffuseColor;
+    glm::vec3 baseColor;
+    glm::vec3 ambientColor;
+    glm::vec3 specularColor;
+
+    float specularStrength;
+    float specularExponent;
 };
 
 class aMesh {
@@ -30,8 +38,9 @@ public:
     std::vector<aVertex>      vertices;
     std::vector<unsigned int> indices;
     std::vector<aTexture>     textures;
+    aMaterial material;
 
-    aMesh(std::vector<aVertex> vertices, std::vector<unsigned int> indices, std::vector<aTexture> textures);
+    aMesh(std::vector<aVertex> vertices, std::vector<unsigned int> indices, std::vector<aTexture> textures, aMaterial MAterial);
     void Draw(Shader& shader);
 private:
     //  render data
@@ -50,6 +59,7 @@ private:
     std::vector<aMesh> meshes;
     std::string directory;
     std::unordered_map <std::string, aTexture> texLoaded;
+    glm::mat4 modelTransform = glm::mat4(1.0f);
 
     void loadModel(std::string& path);
     void processNode(aiNode* node, const aiScene* scene);

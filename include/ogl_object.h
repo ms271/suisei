@@ -76,7 +76,6 @@ public:
     cMesh(const std::vector<float> &vertices = cube_model);
     void buffer();
     ~cMesh();
-    void del();
     void bind();
     void unbind();
 };
@@ -87,9 +86,9 @@ public:
     glm::vec3 mainVec = glm::vec3(1.0f, 1.0f, 1.0f);
     cTexture* mainTex;
 
-    glm::vec3 ambVec = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 ambVec = glm::vec3(1.0f, 1.0f, 1.0f);
     cTexture* diffTex;
-    glm::vec3 diffVec = glm::vec3(1.0f, 0.5f, 0.31f);
+    glm::vec3 diffVec = glm::vec3(1.0f, 1.0f, 1.0f);
     
     cTexture* specTex;
     glm::vec3 specVec = glm::vec3(0.5f, 0.5f, 0.5f);
@@ -111,7 +110,7 @@ public:
 
     bool useFlatTex = 0;
 
-    int useLightType = 0;//0 posLight, 1 dirLight, 2 flashLight
+    //int useLightType = 0;//0 posLight, 1 dirLight, 2 flashLight
     bool flatShade = 0;
 
     cMesh* objMesh;

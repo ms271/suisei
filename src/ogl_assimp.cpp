@@ -1,10 +1,11 @@
 #include"../include/ogl_assimp.h"
 
-aMesh::aMesh(std::vector<aVertex> VErtices, std::vector<unsigned int> INdices, std::vector<aTexture> TExtures)
+aMesh::aMesh(std::vector<aVertex> VErtices, std::vector<unsigned int> INdices, std::vector<aTexture> TExtures, aMaterial MAterial)
 {
     this->vertices = VErtices;
     this->indices = INdices;
     this->textures = TExtures;
+    this->material = MAterial;
     
     SetupMesh();
 }
@@ -45,13 +46,29 @@ void aMesh::SetupMesh()
 
 void aMesh::Draw(Shader& shader)
 {
-//textures have been preloaded into their respective ids, what we have to do is bind them at their respective postions
+//textures and materials have been preloaded into their respective ids, what we have to do is bind them at their respective postions
     
+    shader.setVec3("asiMaterial.base", material.baseColor);
+    shader.setVec3("asiMaterial.ambient", material.ambientColor);
+    shader.setVec3("asiMaterial.diffuse", material.diffuseColor);
+    shader.setVec3("asiMaterial.specular", material.specularColor);
+    shader.setFloat("asiMaterial.specularStrength", material.specularStrength);
+    shader.setFloat("asiMaterial.specularExponent", material.specularExponent);
+    
+    shader.setInt("asiNumOfTextures", textures.size());
+
     for (int i = 0; i < textures.size(); i++)
     {
+        if(i > 16) break;
         glActiveTexture(GL_TEXTURE0 + i);
         shader.setInt("asiTexture[" + std::to_string(i) + "]", textures[i].id);
+        
+        if(textures[i].type == 12) textures[i].type = 1;
+        
         shader.setInt("asiTexType[" + std::to_string(i) + "]", textures[i].type);//1 is diffuse, 2 is specular
+        shader.setFloat("asiTexBlend[" + std::to_string(i) + "]", textures[i].blend);
+        shader.setFloat("asiTexBlendOp[" + std::to_string(i) + "]", textures[i].blendOp);
+
         glBindTexture(GL_TEXTURE_2D, textures[i].id);
     }
     glActiveTexture(GL_TEXTURE0);
@@ -64,6 +81,19 @@ void aMesh::Draw(Shader& shader)
 aModel::aModel(std::string path)
 {
     loadModel(path);
+}
+
+void aModel::Draw(Shader& shader)
+{
+    shader.setMat4("model", modelTransform);
+    glm::mat3 normalMatrix = (glm::transpose(glm::inverse(glm::mat3(modelTransform))));
+    shader.setMat3("normMatrix", normalMatrix);
+    shader.setBool("assimp", true);
+
+    for (unsigned int i = 0; i < meshes.size(); i++)
+        meshes[i].Draw(shader);
+
+    shader.setBool("assimp", false);
 }
 
 void aModel::loadModel(std::string& path)
@@ -103,6 +133,7 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
     std::vector<aVertex> vertices;
     std::vector<unsigned int> indices;
     std::vector<aTexture> textures;
+    aMaterial meshMat;
     bool hasTextures = true;
 
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -156,11 +187,96 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
             }
 
             std::vector<aTexture> Maps = loadMaterialTextures(material, (aiTextureType)i, scene);
+
             textures.insert(textures.end(), Maps.begin(), Maps.end());
         }
-    }
+        std::cout << textures.size() << '\n';
+        //base----------------------------------------------------------------------------------------------------------
+        aiColor3D aiBase(1.0f, 1.0f, 1.0f);
 
-    return aMesh(vertices, indices, textures);
+        if (material->Get(AI_MATKEY_BASE_COLOR, aiBase) != AI_SUCCESS)
+        {
+            std::cout << "[Material Warning]: No Base color found. Defaulting to white.\n";
+        }
+
+        meshMat.baseColor = glm::vec3(aiBase.r, aiBase.g, aiBase.b);
+        if (meshMat.baseColor == glm::vec3(0))
+        {
+            std::cout<<"\nbaseColor is 0, set to 1\n";
+            meshMat.baseColor = glm::vec3(1);
+            aiBase.r = 1;aiBase.g = 1;aiBase.b = 1;
+        }
+
+        //Diffuse-------------------------------------------------------------------------------------------------------------------
+        aiColor3D aiDiffuse(aiBase.r, aiBase.g, aiBase.b);
+
+        if (material->Get(AI_MATKEY_COLOR_DIFFUSE, aiDiffuse) != AI_SUCCESS)
+        {
+            std::cout << "[Material Warning]: No diffuse color found. Defaulting to base.\n";
+        }
+
+        if (meshMat.diffuseColor == glm::vec3(0))
+        {
+            std::cout << "\ndiffuseColor is 0, set to 1\n";
+            meshMat.diffuseColor = glm::vec3(1);
+            aiDiffuse.r = 1;aiDiffuse.g = 1;aiDiffuse.b = 1;
+        }
+
+        meshMat.diffuseColor = glm::vec3(aiDiffuse.r, aiDiffuse.g, aiDiffuse.b);
+
+        //ambient-------------------------------------------------------------------------------------------------------------------
+        aiColor3D aiAmbient(aiDiffuse.r, aiDiffuse.g, aiDiffuse.b);
+
+        if (material->Get(AI_MATKEY_COLOR_AMBIENT, aiAmbient) != AI_SUCCESS)
+        {
+            std::cout << "[Material Warning]: No Ambient color found. Defaulting to diffuse.\n";
+        }
+        meshMat.ambientColor = glm::vec3(aiAmbient.r, aiAmbient.g, aiAmbient.b);
+
+        if (meshMat.ambientColor == glm::vec3(0))
+        {
+            std::cout << "\nambientColor is 0, set to 1\n";
+            meshMat.ambientColor = glm::vec3(1);
+            aiAmbient.r = 1;aiAmbient.g = 1;aiAmbient.b = 1;
+        }
+
+        //specular----------------------------------------------------------------------------------------------------------
+        aiColor3D aiSpecular(0.0f, 0.0f, 0.0f);
+
+        if (material->Get(AI_MATKEY_COLOR_SPECULAR, aiSpecular) != AI_SUCCESS)
+        {
+            std::cout << "[Material Warning]: No Specular color found. Defaulting to black.\n";
+        }
+
+        meshMat.specularColor = glm::vec3(aiSpecular.r, aiSpecular.g, aiSpecular.b);
+
+        //shinyStrenth----------------------------------------------------------------------------------------------------------
+        float shinyStrength = 0.0f;
+
+        if (material->Get(AI_MATKEY_SHININESS_STRENGTH, shinyStrength) != AI_SUCCESS)
+        {
+            // Goal #4: Error handling if the model doesn't define a diffuse color
+            std::cout << "[Material Warning]: No shinyStrength found. Defaulting to 0.\n";
+        }
+        meshMat.specularStrength = shinyStrength;
+        
+        //shinyExponent----------------------------------------------------------------------------------------------------------
+        float shinyExponent = 32.0f;
+
+        if (material->Get(AI_MATKEY_SHININESS, shinyExponent) != AI_SUCCESS)
+        {
+            std::cout << "[Material Warning]: No shinyExponent found. Defaulting to 32.\n";
+        }
+
+        if (shinyExponent < 1)
+        {
+            std::cout << "\nBad shinyExponent value, increasing to 1";
+            shinyExponent = 1;
+        }
+        meshMat.specularExponent = shinyExponent;
+
+    }
+    return aMesh(vertices, indices, textures, meshMat);
 }
 
 std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureType type, const aiScene* scene)
@@ -168,16 +284,18 @@ std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
     std::vector<aTexture> textures;
     int typeName = -1;
 
-    if (type != (aiTextureType)1 && type != (aiTextureType)2)
+    if (type != (aiTextureType)1 && type != (aiTextureType)2 && type != (aiTextureType)12)
     {
         if (mat->GetTextureCount(type) > 0)
         {
-            std::cout<<"counts of non supported texture - "<< mat->GetTextureCount(type)<<'\n';
+            std::cout<<"\ncounts of non supported texture - "<< mat->GetTextureCount(type)<<'\n';
+            std::cout<<"texture type - " << type << "\n\n";
             return textures;
         }
     }
     else
     {
+        std::cout<<"\n"<<type<<"\n";
         typeName = (int)type;
     }
     
@@ -203,6 +321,20 @@ std::vector<aTexture> aModel::loadMaterialTextures(aiMaterial* mat, aiTextureTyp
                 texture.id = TextureFromFile(str.C_Str(), directory);
             }
 
+            float blend = 1.0f; // Default fallback
+            
+            // AI_MATKEY_TEXBLEND requires both the type AND the specific index (i)
+            if (mat->Get(AI_MATKEY_TEXBLEND(type, i), blend) != AI_SUCCESS) {
+                blend = 1.0f;
+            }
+
+            int blendOp = 0;
+            if (mat->Get(AI_MATKEY_TEXOP(type, i), blendOp) != AI_SUCCESS) {
+                blendOp = 0;
+            }
+
+            texture.blendOp = blendOp;
+            texture.blend = blend;
             texture.type = typeName;
             texture.path = str.C_Str();
             textures.push_back(texture);
