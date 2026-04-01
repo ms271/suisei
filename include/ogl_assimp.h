@@ -5,6 +5,7 @@
 
 unsigned int TextureFromMemory(const aiTexture* embeddedTexture);
 unsigned int TextureFromFile(const char* path, const std::string& directory);
+glm::mat4 aiToGlm(aiMatrix4x4& from);
 
 struct aTexture {
     unsigned int id;
