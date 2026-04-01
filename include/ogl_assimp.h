@@ -54,16 +54,16 @@ private:
 class aModel
 {
 public:
-    aModel(std::string path);
+    aModel(std::string path, bool brokeTrans = false);
     void Draw(Shader& shader);
     glm::mat4 modelTransform = glm::mat4(1.0f);
-    bool brokenTransform = false;
 private:
     // model data
     std::vector<aMesh> meshes;
     std::string directory;
     std::unordered_map <std::string, aTexture> texLoaded;
-    
+    bool brokenTransform = false;
+
     void loadModel(std::string& path);
     void processNode(aiNode* node, const aiScene* scene, glm::mat4 parentTransform);
     aMesh processMesh(aiMesh* mesh, const aiScene* scene);

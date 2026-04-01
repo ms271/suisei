@@ -21,11 +21,20 @@ int main()
     glm::mat4 trans = glm::mat4(1.0f);
     
     cMesh cubeMesh;
-    aModel model1("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb");
+    aModel model1("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb", true);
 
     cObject cube1;
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
+    cube1.p.clear();
+    for (int i = -50; i < 51; i++)
+    {
+        for (int j = -10; j < 11; j++)
+        {
+            cube1.p.push_back(glm::vec3(j, -0.5 , i));
+        }
+    }
+    cube1.material.mainVec = glm::vec3(0.1, 0.1, 0.1);
 
     cFlashLgt flashLight;
     
@@ -33,6 +42,16 @@ int main()
     light1.flashLight = &flashLight;
     light1.lightType = 2;
     cam1.camLight = light1.flashLight;
+    
+    cDirLgt dirLight;
+    dirLight.ambient = glm::vec3(0.8);
+    dirLight.diffuse = glm::vec3(0.5);
+    dirLight.specular = glm::vec3(0.4);
+    
+    cLight light2;
+    light2.dirLight = &dirLight;
+    light2.lightType = 1;
+    
     
     ourShader.use(); 
     
@@ -57,10 +76,12 @@ int main()
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
         
-        light1.run(ourShader);
+        //light1.run(ourShader);
+        light2.run(ourShader);
+        model1.modelTransform *= glm::translate(glm::mat4(1), glm::vec3(0, 0.01, 0));
 
         model1.Draw(ourShader);
-        //cube1.draw(model, ourShader, cam1);
+        cube1.draw(model, ourShader, cam1);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();

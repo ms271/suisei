@@ -85,9 +85,10 @@ void aMesh::Draw(Shader& shader, glm::mat4& worldTransform)
     glBindVertexArray(0);
 }
 
-aModel::aModel(std::string path)
+aModel::aModel(std::string path, bool brokeTrans)
 {
     loadModel(path);
+    brokenTransform = brokeTrans;
 }
 
 void aModel::Draw(Shader& shader)
