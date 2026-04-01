@@ -115,16 +115,22 @@ void aModel::loadModel(std::string& path)
 
 void aModel::processNode(aiNode* node, const aiScene* scene)
 {
+    glm::mat4 localTransform = aiToGlm(node->mTransformation);
+
+    glm::mat4 globalNodeTransform = parentTransform * localTransform;
+
     // process all the node's meshes (if any)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+        ass_mesh newMesh = processMesh(mesh, scene);
+        newMesh.Transform = globalNodeTransform;
+        meshes.push_back(std::move(newMesh));
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        processNode(node->mChildren[i], scene);
+        processNode(node->mChildren[i], scene, globalNodeTransform);
     }
 }
 
