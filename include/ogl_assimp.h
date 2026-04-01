@@ -49,7 +49,6 @@ private:
     // model data
     std::vector<aMesh> meshes;
     std::string directory;
-    std::vector<aTexture> textures_loaded;
     std::unordered_map <std::string, aTexture> texLoaded;
 
     void loadModel(std::string& path);
