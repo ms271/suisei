@@ -230,6 +230,8 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
             textures.insert(textures.end(), Maps.begin(), Maps.end());
         }
         std::cout <<"size - " << textures.size() << '\n';
+
+        float lowDefault = 0.01f;
         //base----------------------------------------------------------------------------------------------------------
         aiColor3D aiBase(1.0f, 1.0f, 1.0f);
 
@@ -241,9 +243,9 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
         meshMat.baseColor = glm::vec3(aiBase.r, aiBase.g, aiBase.b);
         if (meshMat.baseColor == glm::vec3(0))
         {
-            std::cout<<"\nbaseColor is 0, set to 1\n";
-            meshMat.baseColor = glm::vec3(1);
-            aiBase.r = 1;aiBase.g = 1;aiBase.b = 1;
+            std::cout<<"\nbaseColor is 0, set to lowDefault\n";
+            meshMat.baseColor = glm::vec3(lowDefault);
+            aiBase.r = lowDefault; aiBase.g = lowDefault; aiBase.b = lowDefault;
         }
 
         //Diffuse-------------------------------------------------------------------------------------------------------------------
@@ -256,9 +258,9 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
 
         if (meshMat.diffuseColor == glm::vec3(0))
         {
-            std::cout << "\ndiffuseColor is 0, set to 1\n";
-            meshMat.diffuseColor = glm::vec3(1);
-            aiDiffuse.r = 1;aiDiffuse.g = 1;aiDiffuse.b = 1;
+            std::cout << "\ndiffuseColor is 0, set to lowDefault\n";
+            meshMat.diffuseColor = glm::vec3(lowDefault);
+            aiDiffuse.r = lowDefault; aiDiffuse.g = lowDefault; aiDiffuse.b = lowDefault;
         }
 
         meshMat.diffuseColor = glm::vec3(aiDiffuse.r, aiDiffuse.g, aiDiffuse.b);
@@ -274,17 +276,17 @@ aMesh aModel::processMesh(aiMesh* mesh, const aiScene* scene)
 
         if (meshMat.ambientColor == glm::vec3(0))
         {
-            std::cout << "\nambientColor is 0, set to 1\n";
-            meshMat.ambientColor = glm::vec3(1);
-            aiAmbient.r = 1;aiAmbient.g = 1;aiAmbient.b = 1;
+            std::cout << "\nambientColor is 0, set to lowDefault\n";
+            meshMat.ambientColor = glm::vec3(lowDefault);
+            aiAmbient.r = lowDefault; aiAmbient.g = lowDefault; aiAmbient.b = lowDefault;
         }
 
         //specular----------------------------------------------------------------------------------------------------------
-        aiColor3D aiSpecular(0.0f, 0.0f, 0.0f);
+        aiColor3D aiSpecular(1);
 
         if (material->Get(AI_MATKEY_COLOR_SPECULAR, aiSpecular) != AI_SUCCESS)
         {
-            std::cout << "[Material Warning]: No Specular color found. Defaulting to black.\n";
+            std::cout << "[Material Warning]: No Specular color found. Defaulting to white.\n";
         }
 
         meshMat.specularColor = glm::vec3(aiSpecular.r, aiSpecular.g, aiSpecular.b);

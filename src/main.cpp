@@ -15,13 +15,31 @@ int main()
     Shader ourShader("shader/vertex.glsl", "shader/fragment.glsl");//in shader
     camera cam1;//in cam
     set_callback(ourWindow.window, cam1);//in cam
+//    stbi_set_flip_vertically_on_load(true);
 
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 trans = glm::mat4(1.0f);
     
     cMesh cubeMesh;
-    aModel model1("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb", true);
+    
+    //aModel yae("models/yae_miko2.glb");
+    //glm::mat4 yaeTranslate = glm::mat4(1);
+    //yaeTranslate = glm::translate(yaeTranslate, glm::vec3(0.5,0,0));
+    //yaeTranslate = glm::rotate(yaeTranslate, glm::radians(90.0f), glm::vec3(0, -1, 0));
+    //yaeTranslate = glm::scale(yaeTranslate, glm::vec3(7.3));
+    //yae.modelTransform = yaeTranslate;
+
+    //aModel ei("models/genshin_impact_-_raiden_ei_boss.glb");
+    //yaeTranslate = glm::mat4(1);
+    //yaeTranslate = glm::translate(yaeTranslate, glm::vec3(-0.5, 0, 0));
+    //yaeTranslate = glm::rotate(yaeTranslate, glm::radians(90.0f), glm::vec3(1, 0, 0));
+    //yaeTranslate = glm::rotate(yaeTranslate, glm::radians(90.0f), glm::vec3(0, 1, 0));
+    //ei.modelTransform = yaeTranslate;
+
+    //aModel raiden("models/raiden-fully-textured-and-rigged/source/raiden_textured_rigged.glb");
+
+    aModel f1Car("models/honda_nsx_1990/scene.gltf");
 
     cObject cube1;
     cube1.objMesh = &cubeMesh;
@@ -45,8 +63,8 @@ int main()
     
     cDirLgt dirLight;
     dirLight.ambient = glm::vec3(0.8);
-    dirLight.diffuse = glm::vec3(0.5);
-    dirLight.specular = glm::vec3(0.4);
+    dirLight.diffuse = glm::vec3(0);
+    dirLight.specular = glm::vec3(0);
     
     cLight light2;
     light2.dirLight = &dirLight;
@@ -78,9 +96,11 @@ int main()
         
         //light1.run(ourShader);
         light2.run(ourShader);
-        model1.modelTransform *= glm::translate(glm::mat4(1), glm::vec3(0, 0.01, 0));
 
-        model1.Draw(ourShader);
+        f1Car.Draw(ourShader);
+        //raiden.Draw(ourShader);
+        //yae.Draw(ourShader);
+        //ei.Draw(ourShader);
         cube1.draw(model, ourShader, cam1);
 
         glfwSwapBuffers(ourWindow.window);
