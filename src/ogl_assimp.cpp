@@ -87,8 +87,8 @@ void aMesh::Draw(Shader& shader, glm::mat4& worldTransform)
 
 aModel::aModel(std::string path, bool brokeTrans)
 {
-    loadModel(path);
     brokenTransform = brokeTrans;
+    loadModel(path);
 }
 
 void aModel::Draw(Shader& shader)
