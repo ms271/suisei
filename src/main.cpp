@@ -8,14 +8,27 @@
 #include "../include/ogl_object.h"
 #include "../include/ogl_draw.h"
 #include "../include/ogl_assimp.h"
+#include "../include/ogl_test.h"
 
 int main()
-{
+{//next 5 lines always
+    initWindow secondWindow;
+    Shader ourShader2("shader/vertex.glsl", "shader/fragment.glsl");//in shader
+    camera cam2;//in cam
+    set_callback(secondWindow.window, cam2);//in cam
+    stbi_set_flip_vertically_on_load(true);
+    glEnable(GL_DEPTH_TEST);
+
+    testScene alpha(secondWindow, ourShader2, cam2);
+    alpha.run();
+    glDeleteProgram(ourShader2.ID);
+
     initWindow ourWindow;//in util
     Shader ourShader("shader/vertex.glsl", "shader/fragment.glsl");//in shader
     camera cam1;//in cam
     set_callback(ourWindow.window, cam1);//in cam
     stbi_set_flip_vertically_on_load(true);
+    glEnable(GL_DEPTH_TEST);
 
     glm::mat4 model = glm::mat4(1.0f);
     glm::mat4 view = glm::mat4(1.0f);
@@ -34,17 +47,14 @@ int main()
 
     //aModel raiden("models/raiden-fully-textured-and-rigged/source/raiden_textured_rigged.glb");
 
-    aModel f1Car("models/ISS_stationary.glb", true);
+    aModel f1Car("models/2020-f1-mercedes-benz-w11/source/2020 F1 Mercedes-Benz W11.glb", true);
     glm::mat4 yaeTranslate = glm::mat4(1);
 
-    yaeTranslate = glm::translate(yaeTranslate, glm::vec3(0, 0, -40));
-
-    f1Car.modelTransform = yaeTranslate;
-
+    
     cObject cube1;
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
-    cube1.p.clear();
+    cube1.p.clear();//cube1.p stores the positions where cube will be rendered
     for (int i = -50; i < 51; i++)
     {
         for (int j = -10; j < 11; j++)
@@ -52,6 +62,7 @@ int main()
             cube1.p.push_back(glm::vec3(j, -0.5 , i));
         }
     }
+    cube1.p.push_back(glm::vec3(3, 1, 3));
     cube1.material.mainVec = glm::vec3(0.1, 0.1, 0.1);
 
     cFlashLgt flashLight;
@@ -70,15 +81,12 @@ int main()
     light2.dirLight = &dirLight;
     light2.lightType = 1;
     
-    
-    ourShader.use(); 
-    
     float bgred = 0.0f;
     float bggreen = 0.0f;
     float bgblue = 0.0f;
 
-    glEnable(GL_DEPTH_TEST);
-    
+    ourShader.use();
+
     while (!glfwWindowShouldClose(ourWindow.window))
     {
         cam1.run(ourWindow.window);
@@ -94,18 +102,24 @@ int main()
         ourShader.setMat4("view", view);
         ourShader.setMat4("projection", cam1.PROJ);
         
-        //light1.run(ourShader);
+        light1.run(ourShader);
         light2.run(ourShader);
+
+        yaeTranslate = glm::rotate(yaeTranslate, glm::radians(1.0f), glm::vec3(0, 1, 0));
+
+        f1Car.modelTransform = yaeTranslate;
+
 
         f1Car.Draw(ourShader);
         //raiden.Draw(ourShader);
         //yae.Draw(ourShader);
         //ei.Draw(ourShader);
-        //cube1.draw(model, ourShader, cam1);
+        cube1.draw(model, ourShader, cam1);
 
         glfwSwapBuffers(ourWindow.window);
         glfwPollEvents();
     }
+    //next 3 lines always
     glDeleteProgram(ourShader.ID);
     glfwTerminate();
     return 0;

@@ -445,14 +445,43 @@ unsigned int TextureFromMemory(const aiTexture* embeddedTexture) {
         // We don't need STB here; we just point OpenGL to the bytes
         width = embeddedTexture->mWidth;
         height = embeddedTexture->mHeight;
+        nrComponents = 4;
         data = reinterpret_cast<unsigned char*>(embeddedTexture->pcData);
     }
 
     if (data) {
-        GLenum format = (nrComponents == 4) ? GL_RGBA : GL_RGB;
+        GLenum format;
+        GLenum internalFormat;
+
+        if (embeddedTexture->mHeight == 0) {
+            // STB provides exact channel counts. We MUST match them to prevent buffer overflows.
+            if (nrComponents == 1) {
+                format = GL_RED;
+                internalFormat = GL_RED;
+            }
+            else if (nrComponents == 2) {
+                format = GL_RG;
+                internalFormat = GL_RG;
+            }
+            else if (nrComponents == 3) {
+                format = GL_RGB;
+                internalFormat = GL_RGB;
+            }
+            else {
+                format = GL_RGBA;
+                internalFormat = GL_RGBA;
+            }
+        }
+        else {
+            // Assimp uncompressed data is BGRA. OpenGL needs RGBA internally.
+            format = GL_BGRA;
+            internalFormat = GL_RGBA;
+        }
         glBindTexture(GL_TEXTURE_2D, textureID);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
         glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+        glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
         if (embeddedTexture->mHeight == 0) stbi_image_free(data); // Only free if STB loaded it
     }
     return textureID;
