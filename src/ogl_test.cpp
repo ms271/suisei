@@ -33,6 +33,8 @@ void testScene::run()
     std::vector<double> frameTimes (200);
     std::vector<int> noOfVertices (200);
     
+    glfwSwapInterval(0);
+
     for(int i = 0; i < 200; i++)
     {
         int cubex = randomInt(0, 60);
@@ -78,6 +80,9 @@ void testScene::run()
         auto end = std::chrono::high_resolution_clock::now();
         frameTimes[i] = std::chrono::duration<double, std::milli>(end - start).count();
     }
+    
+    glfwSwapInterval(1);
+
     std::ofstream csv("python/profiler_data.csv");
     csv << "Vertices,RenderTime\n";
 
