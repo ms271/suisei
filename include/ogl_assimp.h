@@ -39,6 +39,7 @@ public:
     std::vector<aVertex>      vertices;
     std::vector<unsigned int> indices;
     std::vector<aTexture>     textures;
+
     aMaterial material;
     glm::mat4 Transform;
 
@@ -57,6 +58,7 @@ public:
     aModel(std::string path, bool brokeTrans = false);
     void Draw(Shader& shader);
     glm::mat4 modelTransform = glm::mat4(1.0f);
+    int numOfVertices ();
 private:
     // model data
     std::vector<aMesh> meshes;

@@ -16,3 +16,5 @@ public:
 	void run();
 	void resultExport();
 };
+
+int randomInt(int min, int max);

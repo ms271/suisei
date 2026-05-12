@@ -5,6 +5,9 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <random>
+#include <chrono>
+#include <stdlib.h>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -25,6 +28,6 @@ inline unsigned int SCR_HEIGHT = 1080;
 inline const unsigned int MAJOR_VERSION = 3;
 inline const unsigned int MINOR_VERSION = 3;
 
-inline const float window_factor = 1;
+inline const float window_factor = 1.5;
 
 inline bool BgColorStatus = 0;

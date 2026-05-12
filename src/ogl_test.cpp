@@ -8,44 +8,14 @@ void testScene::run()
 
     cMesh cubeMesh;
 
-    //aModel yae("models/yae_miko2.glb");
-    //yae.modelTransform = yaeTranslate;
-
-    //aModel ei("models/genshin_impact_-_raiden_ei_boss.glb");
-    //yaeTranslate = glm::mat4(1);
-    //yaeTranslate = glm::rotate(yaeTranslate, glm::radians(90.0f), glm::vec3(1, 0, 0));
-    //yaeTranslate = glm::rotate(yaeTranslate, glm::radians(90.0f), glm::vec3(0, 1, 0));
-    //ei.modelTransform = yaeTranslate;
-
-    //aModel raiden("models/raiden-fully-textured-and-rigged/source/raiden_textured_rigged.glb");
-
-    glm::mat4 yaeTranslate = glm::mat4(1);
-
-
     cObject cube1;
     cube1.objMesh = &cubeMesh;
     cube1.drawWorld = &simpleWorldDraw;
-    cube1.p.clear();//cube1.p stores the positions where cube will be rendered
-    for (int i = -50; i < 51; i++)
-    {
-        for (int j = -10; j < 11; j++)
-        {
-            cube1.p.push_back(glm::vec3(j, -0.5, i));
-        }
-    }
-    cube1.p.push_back(glm::vec3(3, 1, 3));
     cube1.material.mainVec = glm::vec3(0.1, 0.1, 0.1);
-
-    cFlashLgt flashLight;
-
-    cLight light1;
-    light1.flashLight = &flashLight;
-    light1.lightType = 2;
-    sceneCamera->camLight = light1.flashLight;
 
     cDirLgt dirLight;
     dirLight.ambient = glm::vec3(0.8);
-    dirLight.diffuse = glm::vec3(0);
+    dirLight.diffuse = glm::vec3(0.8);
     dirLight.specular = glm::vec3(0);
 
     cLight light2;
@@ -60,11 +30,34 @@ void testScene::run()
 
     glEnable(GL_DEPTH_TEST);
 
-    while (!glfwWindowShouldClose(sceneWindow->window))
+    std::vector<double> frameTimes (200);
+    std::vector<int> noOfVertices (200);
+    
+    for(int i = 0; i < 200; i++)
     {
-        sceneCamera->run(sceneWindow->window);
-        processInput(sceneWindow->window);
-        makeBlue(sceneWindow->window, bgred, bggreen, bgblue);
+        int cubex = randomInt(0, 60);
+        int cubey = randomInt(0, 60);
+        int cubez = randomInt(0, 60);
+
+        float sidex = 100.0f / (float)cubex;
+        float sidey = 100.0f / (float)cubey;
+        float sidez = 100.0f / (float)cubez;
+
+        cube1.p.clear();//cube1.p stores the positions where cube will be rendered
+        for (int i = 0; i < 2 * cubex + 1; i++)
+        {
+            for (int j = 0; j < 2 * cubey + 1; j++)
+            {
+                for (int k = 0; k < 2 * cubez + 1; k++)
+                {
+                    cube1.p.push_back(glm::vec3(-100 + i * sidex, -100 + j * sidey, -100 + k * sidez));
+                }
+            }
+        }
+
+        noOfVertices[i] = cube1.p.size() * 36;
+
+        auto start = std::chrono::high_resolution_clock::now();
 
         glClearColor(bgred, bggreen, bgblue, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -75,16 +68,27 @@ void testScene::run()
         sceneShader->setMat4("view", view);
         sceneShader->setMat4("projection", sceneCamera->PROJ);
 
-        light1.run(*sceneShader);
         light2.run(*sceneShader);
-
-        yaeTranslate = glm::rotate(yaeTranslate, glm::radians(1.0f), glm::vec3(0, 1, 0));
 
         cube1.draw(model, *sceneShader, *sceneCamera);
 
         glfwSwapBuffers(sceneWindow->window);
         glfwPollEvents();
+
+        auto end = std::chrono::high_resolution_clock::now();
+        frameTimes[i] = std::chrono::duration<double, std::milli>(end - start).count();
     }
+    std::ofstream csv("python/profiler_data.csv");
+    csv << "Vertices,RenderTime\n";
+
+    for (int i = 0; i < 200; i++)
+    {
+        csv << noOfVertices[i] << ","
+            << frameTimes[i] << "\n";
+    }
+
+    csv.close();
+    glfwDestroyWindow(sceneWindow->window);
     return;
 }
 
@@ -93,4 +97,9 @@ testScene::testScene(initWindow& thisWindow, Shader& thisShader, camera& thisCam
     sceneWindow = &thisWindow;
     sceneShader = &thisShader;
     sceneCamera = &thisCamera;
+}
+
+int randomInt(int min, int max) {
+    static std::mt19937 rng(std::random_device{}());
+    return std::uniform_int_distribution<int>(min, max)(rng);
 }

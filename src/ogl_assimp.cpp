@@ -100,6 +100,16 @@ void aModel::Draw(Shader& shader)
     shader.setBool("assimp", false);
 }
 
+int aModel::numOfVertices()
+{
+    int num = 0;
+    for (int i = 0; i < meshes.size(); i++)
+    {
+        num += meshes[i].indices.size();
+    }
+    return num;
+}
+
 void aModel::loadModel(std::string& path)
 {
 //make and add import to a scene
